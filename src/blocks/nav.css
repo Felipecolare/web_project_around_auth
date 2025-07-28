@@ -1,0 +1,25 @@
+/* ===== src/blocks/nav.css ===== */
+/* Navigation */ 
+.nav { 
+    border-bottom: 1px solid rgba(84, 84, 84, 1);
+    margin-bottom: 40px; 
+    padding: 45px 0 40px;
+  }  
+
+.nav__logo { 
+  display: flex; 
+  align-items: baseline; 
+  gap: 5px; 
+} 
+
+.nav__logo-main { 
+  font-size: 30px; 
+  font-weight: 900; 
+  color: #ffffff; 
+} 
+
+.nav__logo-sub { 
+  font-size: 14px; 
+  font-weight: 400; 
+  color: #ffffff; 
+}

@@ -1,0 +1,9 @@
+/* ===== src/blocks/footer.css ===== */
+/* Footer */ 
+.footer__copyright { 
+  font-size: 18px; 
+  font-weight: 400; 
+  line-height: 1.22; 
+  color: #545454; 
+  margin: 0; 
+}
