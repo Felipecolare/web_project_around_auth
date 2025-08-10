@@ -6,7 +6,7 @@ import Footer from "./Footer/Footer.jsx";
 import Login from "./Auth/Login.jsx";
 import Register from "./Auth/Register.jsx";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.jsx";
-import { AuthProvider, useAuth } from "../contexts/AuthContext.js";
+import { AuthProvider, useAuth } from "../contexts/AuthContext.jsx";
 import api from "../utils/api.js";
 
 // Componente principal da aplicação (protegido)
