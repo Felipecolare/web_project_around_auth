@@ -6,6 +6,7 @@ import Footer from "./Footer/Footer.jsx";
 import Login from "./Auth/Login.jsx";
 import Register from "./Auth/Register.jsx";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.jsx";
+import InfoTooltip from "./InfoTooltip/InfoTooltip.jsx";
 import { AuthProvider, useAuth } from "../contexts/AuthContext.jsx";
 import api from "../utils/api.js";
 
@@ -15,6 +16,7 @@ function AppContent() {
   const [popup, setPopup] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [infoTooltip, setInfoTooltip] = useState({ isOpen: false, isSuccess: false, message: '' });
   const { currentUser, isAuthenticated } = useAuth();
 
   // Carregar cartões quando o usuário estiver autenticado
@@ -23,6 +25,16 @@ function AppContent() {
       loadCards();
     }
   }, [isAuthenticated, currentUser]);
+
+  // Função para mostrar InfoTooltip
+  const showInfoTooltip = (isSuccess, message) => {
+    setInfoTooltip({ isOpen: true, isSuccess, message });
+  };
+
+  // Função para fechar InfoTooltip
+  const closeInfoTooltip = () => {
+    setInfoTooltip({ isOpen: false, isSuccess: false, message: '' });
+  };
 
   const loadCards = async () => {
     try {
@@ -149,6 +161,14 @@ function AppContent() {
         onAddPlaceSubmit={handleAddPlaceSubmit}
       />
       <Footer />
+      
+      {/* InfoTooltip para mensagens de sucesso/erro */}
+      <InfoTooltip
+        isOpen={infoTooltip.isOpen}
+        onClose={closeInfoTooltip}
+        isSuccess={infoTooltip.isSuccess}
+        message={infoTooltip.message}
+      />
     </div>
   );
 }

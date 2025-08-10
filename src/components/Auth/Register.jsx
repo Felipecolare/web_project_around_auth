@@ -115,8 +115,12 @@ export default function Register() {
     
     if (result.success) {
       // Redirecionar para login após registro bem-sucedido
-      alert('Registro realizado com sucesso! Agora faça login.');
-      navigate('/signin');
+      navigate('/signin', { 
+        state: { 
+          message: 'Registro realizado com sucesso! Agora faça login.',
+          isSuccess: true 
+        } 
+      });
     }
   };
 

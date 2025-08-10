@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
           api.setToken(token);
           
           // Verificar se o token é válido
-          const userData = await auth.checkToken();
+          const userData = await auth.checkToken(token);
           setCurrentUser(userData.data);
           setIsAuthenticated(true);
           setAuthError(null);
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         api.setToken(response.token);
         
         // Buscar informações do usuário
-        const userData = await auth.checkToken();
+        const userData = await auth.checkToken(response.token);
         setCurrentUser(userData.data);
         setIsAuthenticated(true);
         setAuthError(null);

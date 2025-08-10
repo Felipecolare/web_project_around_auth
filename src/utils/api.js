@@ -57,7 +57,7 @@ class Api {
         if (errorData.message) {
           errorMessage = errorData.message;
         }
-      } catch (e) {
+      } catch {
         // Se não conseguir fazer parse do JSON, usar o texto como está
         if (text) {
           errorMessage = text;
@@ -94,7 +94,14 @@ class Api {
         return false;
       }
       
-      const payload = JSON.parse(atob(token.split('.')[1])); // Decodifica o payload
+      // Verificar se o token tem o formato correto (3 partes separadas por ponto)
+      const tokenParts = token.split('.');
+      if (tokenParts.length !== 3) {
+        console.warn('⚠️ Formato de token inválido!');
+        return false;
+      }
+      
+      const payload = JSON.parse(atob(tokenParts[1])); // Decodifica o payload
       const currentTime = Math.floor(Date.now() / 1000); // Tempo atual em segundos
       
       if (payload.exp && payload.exp < currentTime) {
@@ -120,10 +127,6 @@ class Api {
       return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
     }
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
-    
     return this._request(`${this._baseUrl}/users/me`, {
       headers: this._headers,
     });
@@ -133,8 +136,8 @@ class Api {
   setUserInfo({ name, about }) {
     console.log('📝 Atualizando informações do usuário:', { name, about });
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
     }
     
     return this._request(`${this._baseUrl}/users/me`, {
@@ -151,8 +154,8 @@ class Api {
   getInitialCards() {
     console.log('🃏 Buscando cartões...');
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
     }
     
     return this._request(`${this._baseUrl}/cards`, {
@@ -164,8 +167,8 @@ class Api {
   addCard({ name, link }) {
     console.log('➕ Adicionando novo cartão:', { name, link });
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
     }
     
     return this._request(`${this._baseUrl}/cards`, {
@@ -182,8 +185,8 @@ class Api {
   deleteCard(cardId) {
     console.log('🗑️ Deletando cartão:', cardId);
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
     }
     
     return this._request(`${this._baseUrl}/cards/${cardId}`, {
@@ -196,8 +199,8 @@ class Api {
   likeCard(cardId) {
     console.log('❤️ Curtindo cartão:', cardId);
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
     }
     
     return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
@@ -210,8 +213,8 @@ class Api {
   dislikeCard(cardId) {
     console.log('💔 Descurtindo cartão:', cardId);
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
     }
     
     return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
@@ -224,8 +227,8 @@ class Api {
   changeLikeCardStatus(cardId, isLiked) {
     console.log('💝 Alterando status do like:', cardId, isLiked ? 'descurtir' : 'curtir');
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
     }
     
     return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
@@ -238,8 +241,8 @@ class Api {
   setUserAvatar({ avatar }) {
     console.log('🖼️ Atualizando avatar do usuário:', avatar);
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
     }
     
     return this._request(`${this._baseUrl}/users/me/avatar`, {
@@ -256,28 +259,11 @@ class Api {
 const api = new Api({
   baseUrl: "https://se-register-api.en.tripleten-services.com/v1",
   headers: {
-    authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzQyMWZjODcxZWNiMzAwMWVmOTQ1MjciLCJpYXQiOjE3MzI0MDI0NTZ9.QPlus1HCvJGqhYGlqQJdRCM-LqJn6I1OJ2fKN1t-DqE",
     "Content-Type": "application/json",
   },
 });
 
-// Teste imediato da API com informações detalhadas
-console.log('🧪 Testando conexão da API...');
-console.log('🔗 URL base:', api._baseUrl);
-console.log('🎯 Headers:', api._headers);
-
-// Verificar se o token está válido antes de testar
-if (api.hasValidToken()) {
-  api.getUserInfo()
-    .then(userData => {
-      console.log('✅ API funcionando! Dados do usuário:', userData);
-    })
-    .catch(err => {
-      console.error('❌ Erro na API:', err);
-      console.log('💡 Dica: Verifique se o token não expirou e se a URL da API está correta.');
-    });
-} else {
-  console.error('❌ Nenhum token de autorização encontrado. Não é possível testar a API.');
-}
+// API inicializada e pronta para uso
+console.log('🔗 API inicializada com URL base:', api._baseUrl);
 
 export default api;
