@@ -1,11 +1,16 @@
 // ===== src/components/Card/Card.jsx =====
-import { useContext } from 'react';
-import CurrentUserContext from '../../contexts/CurrentUserContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Card(props) {
-  const { card, onCardLike, onCardDelete, onCardClick, isOwn, isLiked } = props;
-  const { currentUser } = useContext(CurrentUserContext); // Obtém o usuário atual do contexto
-  const { name, link, likes } = card;
+  const { card, onCardLike, onCardDelete, onCardClick } = props;
+  const { currentUser } = useAuth();
+  const { name, link, likes, owner } = card;
+  
+  // Calcular se o cartão é do usuário atual
+  const isOwn = owner?._id === currentUser?._id;
+  
+  // Calcular se o usuário atual curtiu o cartão
+  const isLiked = likes?.some(like => like._id === currentUser?._id);
   
   // Classes CSS condicionais para o botão de curtir
   const cardLikeButtonClassName = `card__like-button ${
@@ -57,7 +62,7 @@ export default function Card(props) {
             onClick={handleLikeClick}
           />
           {/* Contador de likes */}
-          {likes.length > 0 && (
+          {likes && likes.length > 0 && (
             <span className="card__like-count">{likes.length}</span>
           )}
         </div>

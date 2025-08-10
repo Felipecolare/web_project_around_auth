@@ -1,12 +1,11 @@
 // ===== src/components/Main/Main.jsx =====
-import { useContext, useRef } from "react";
-import CurrentUserContext from "../../contexts/CurrentUserContext";
-import Popup from "../Popup/Popup.jsx";
-import ImagePopup from "../Popup/ImagePopup.jsx";
-import EditProfile from "../Popup/EditProfile.jsx";
-import EditAvatar from "../Popup/EditAvatar.jsx";
-import NewCard from "../Popup/NewCard.jsx";
-import Card from "../Card/Card.jsx";
+import { useAuth } from '../../contexts/AuthContext';
+import Card from '../Card/Card';
+import Popup from '../Popup/Popup';
+import NewCard from '../Popup/NewCard';
+import EditProfile from '../Popup/EditProfile';
+import EditAvatar from '../Popup/EditAvatar';
+import ImagePopup from '../Popup/ImagePopup';
 
 export default function Main({
   cards,
@@ -18,95 +17,118 @@ export default function Main({
   popup,
   selectedCard,
   isLoading,
-  onAddPlaceSubmit
+  onAddPlaceSubmit,
 }) {
-  // Obter o usuário atual do contexto
-  const { currentUser } = useContext(CurrentUserContext);
-  
-  // Ref para acessar o componente NewCard
-  const newCardRef = useRef();
-
-  // Função modificada para limpar formulário ao fechar popup
-  const handleClosePopup = () => {
-    // Se estivermos fechando o popup de novo cartão, limpar o formulário
-    if (popup?.title === "Novo lugar" && newCardRef.current) {
-      // Limpar campos do formulário
-      const form = document.getElementById('new-card-form');
-      if (form) {
-        form.reset();
-      }
-    }
-    
-    onClosePopup();
-  };
-
-  // Objetos de popup
-  const newCardPopup = { 
-    title: "Novo lugar", 
-    children: <NewCard ref={newCardRef} onAddPlaceSubmit={onAddPlaceSubmit} isLoading={isLoading} /> 
-  };
-  const editProfilePopup = { 
-    title: "Editar perfil", 
-    children: <EditProfile isLoading={isLoading} /> 
-  };
-  const editAvatarPopup = { 
-    title: "Alterar a foto do perfil", 
-    children: <EditAvatar isLoading={isLoading} /> 
-  };
+  const { currentUser } = useAuth();
 
   return (
-    <main className="page__container">
-      <section className="profile">
-        <div className="profile__card-image">
+    <main className="main">
+      <section className="profile page__container">
+        <div className="profile__info">
+          <div className="profile__avatar-container">
+            <img
+              className="profile__avatar"
+              src={currentUser?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}
+              alt="Avatar do usuário"
+            />
+            <button
+              className="profile__avatar-edit"
+              onClick={() => onOpenPopup('edit-avatar')}
+              type="button"
+              aria-label="Editar avatar"
+            >
+              <img
+                className="profile__avatar-edit-icon"
+                src="/src/images/edit_button.png"
+                alt="Ícone de edição"
+              />
+            </button>
+          </div>
+          <div className="profile__text">
+            <h1 className="profile__name">
+              {currentUser?.name || "Jacques Cousteau"}
+            </h1>
+            <p className="profile__about">
+              {currentUser?.about || "Explorador"}
+            </p>
+            <button
+              className="profile__edit-button"
+              onClick={() => onOpenPopup('edit-profile')}
+              type="button"
+              aria-label="Editar perfil"
+            >
+              <img
+                className="profile__edit-icon"
+                src="/src/images/edit_button.png"
+                alt="Ícone de edição"
+              />
+            </button>
+          </div>
+        </div>
+        <button
+          className="profile__add-button"
+          onClick={() => onOpenPopup('new-card')}
+          type="button"
+          aria-label="Adicionar cartão"
+        >
           <img
-            src={currentUser.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}
-            alt={currentUser.name || "Usuário"}
-            className="profile__image"
-            onClick={() => onOpenPopup(editAvatarPopup)}
-            title="Alterar a foto do perfil"
+            className="profile__add-icon"
+            src="/src/images/add_button.png"
+            alt="Ícone de adição"
           />
-        </div>
-        <div className="profile__card">
-          <h2 className="profile__title">{currentUser.name || "Jacques Cousteau"}</h2>
-          <button 
-            type="button" 
-            className="profile__button-edit"
-            onClick={() => onOpenPopup(editProfilePopup)}
-          ></button>
-          <p className="profile__subtitle">{currentUser.about || "Explorador"}</p>
-        </div>
-
-        <button 
-          type="button" 
-          className="profile__button-add"
-          onClick={() => onOpenPopup(newCardPopup)}
-        ></button>
+        </button>
       </section>
 
-      <ul className="cards__list">
-        {cards.map((card) => (
-          <Card 
-            key={card._id} 
-            card={card} 
-            onCardLike={onCardLike}
-            onCardDelete={onCardDelete}
-            onCardClick={onCardClick}
-            isOwn={card.owner._id === currentUser._id}
-            isLiked={card.likes.some(like => like._id === currentUser._id)}
-          />
-        ))}
-      </ul>
+      <section className="cards page__container">
+        <ul className="cards__list">
+          {cards.map((card) => (
+            <Card
+              key={card._id}
+              card={card}
+              onCardLike={onCardLike}
+              onCardDelete={onCardDelete}
+              onCardClick={onCardClick}
+              currentUser={currentUser}
+            />
+          ))}
+        </ul>
+      </section>
 
-      {/* Renderização condicional do popup */}
-      {popup && (
-        <Popup onClose={handleClosePopup} title={popup.title}>
-          {popup.children}
+      {/* Popups */}
+      {popup === 'new-card' && (
+        <Popup onClose={onClosePopup}>
+          <NewCard
+            onClose={onClosePopup}
+            onSubmit={onAddPlaceSubmit}
+            isLoading={isLoading}
+          />
         </Popup>
       )}
 
-      {/* Popup de imagem */}
+      {popup === 'edit-profile' && (
+        <Popup onClose={onClosePopup}>
+          <EditProfile
+            onClose={onClosePopup}
+            currentUser={currentUser}
+            isLoading={isLoading}
+          />
+        </Popup>
+      )}
+
+      {popup === 'edit-avatar' && (
+        <Popup onClose={onClosePopup}>
+          <EditAvatar
+            onClose={onClosePopup}
+            currentUser={currentUser}
+            isLoading={isLoading}
+          />
+        </Popup>
+      )}
+
       {selectedCard && (
-        <ImagePopup card={selectedCard} onClose={onClosePopup} />
+        <Popup onClose={onClosePopup}>
+          <ImagePopup card={selectedCard} />
+        </Popup>
       )}
     </main>
   );

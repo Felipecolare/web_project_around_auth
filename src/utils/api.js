@@ -5,6 +5,28 @@ class Api {
     this._headers = headers;
   }
 
+  // Método para atualizar o token de autorização
+  setToken(token) {
+    if (token) {
+      this._headers.authorization = `Bearer ${token}`;
+      console.log('🔑 Token de autorização atualizado na API');
+    } else {
+      delete this._headers.authorization;
+      console.log('🔑 Token de autorização removido da API');
+    }
+  }
+
+  // Método para obter o token atual
+  getToken() {
+    return this._headers.authorization ? this._headers.authorization.split(' ')[1] : null;
+  }
+
+  // Método para verificar se há um token válido
+  hasValidToken() {
+    const token = this.getToken();
+    return !!token;
+  }
+
   _checkResponse(res) {
     if (res.ok) {
       return res.json();
@@ -66,7 +88,12 @@ class Api {
   _checkTokenValidity() {
     // Decodificar o token JWT para verificar expiração
     try {
-      const token = this._headers.authorization.split(' ')[1]; // Remove "Bearer "
+      const token = this.getToken();
+      if (!token) {
+        console.warn('⚠️ Nenhum token encontrado!');
+        return false;
+      }
+      
       const payload = JSON.parse(atob(token.split('.')[1])); // Decodifica o payload
       const currentTime = Math.floor(Date.now() / 1000); // Tempo atual em segundos
       
@@ -88,6 +115,10 @@ class Api {
   // Método para obter informações do usuário
   getUserInfo() {
     console.log('🔍 Buscando informações do usuário...');
+    
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
+    }
     
     if (!this._checkTokenValidity()) {
       return Promise.reject('Token expirado. Faça login novamente.');
@@ -223,7 +254,7 @@ class Api {
 
 // Criando uma instância da API com os parâmetros necessários
 const api = new Api({
-  baseUrl: "https://around-api.pt-br.tripleten-services.com/v1",
+  baseUrl: "https://se-register-api.en.tripleten-services.com/v1",
   headers: {
     authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzQyMWZjODcxZWNiMzAwMWVmOTQ1MjciLCJpYXQiOjE3MzI0MDI0NTZ9.QPlus1HCvJGqhYGlqQJdRCM-LqJn6I1OJ2fKN1t-DqE",
     "Content-Type": "application/json",
@@ -236,7 +267,7 @@ console.log('🔗 URL base:', api._baseUrl);
 console.log('🎯 Headers:', api._headers);
 
 // Verificar se o token está válido antes de testar
-if (api._checkTokenValidity()) {
+if (api.hasValidToken()) {
   api.getUserInfo()
     .then(userData => {
       console.log('✅ API funcionando! Dados do usuário:', userData);
@@ -246,7 +277,7 @@ if (api._checkTokenValidity()) {
       console.log('💡 Dica: Verifique se o token não expirou e se a URL da API está correta.');
     });
 } else {
-  console.error('❌ Token inválido ou expirado. Não é possível testar a API.');
+  console.error('❌ Nenhum token de autorização encontrado. Não é possível testar a API.');
 }
 
 export default api;

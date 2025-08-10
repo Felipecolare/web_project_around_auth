@@ -1,0 +1,33 @@
+/* ===== src/blocks/info-tooltip.css ===== */
+
+.info-tooltip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-tooltip__content {
+  position: relative;
+  background-color: #fff;
+  border-radius: 10px;
+  max-width: 430px;
+  width: 100%;
+  padding: 60px 36px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.info-tooltip__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.info-tooltip__icon {
+  width: 120px;
+  height: 120px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}

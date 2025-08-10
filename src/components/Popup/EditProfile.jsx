@@ -1,22 +1,26 @@
 /* eslint-disable no-undef */
 // ===== src/components/Popup/EditProfile.jsx =====
-import { useState, useContext, useEffect } from 'react';
-import CurrentUserContext from '../../contexts/CurrentUserContext';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../utils/api';
 
-export default function EditProfile({ isLoading }) {
-  const { currentUser, handleUpdateUser } = useContext(CurrentUserContext);
-
+export default function EditProfile({ onClose, currentUser, isLoading: externalLoading }) {
+  const { currentUser: authUser } = useAuth();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Atualizar campos quando currentUser mudar
+  // Usar o usuário do contexto de autenticação ou das props
+  const user = currentUser || authUser;
+
+  // Atualizar campos quando user mudar
   useEffect(() => {
-    console.log('👤 EditProfile - currentUser mudou:', currentUser);
+    console.log('👤 EditProfile - user mudou:', user);
     
-    if (currentUser) {
-      const newName = currentUser.name || '';
-      const newDescription = currentUser.about || '';
+    if (user) {
+      const newName = user.name || '';
+      const newDescription = user.about || '';
       
       setName(newName);
       setDescription(newDescription);
@@ -24,15 +28,15 @@ export default function EditProfile({ isLoading }) {
       
       console.log('📝 Campos preenchidos:', { name: newName, about: newDescription });
     }
-  }, [currentUser]);
+  }, [user]);
 
   const handleNameChange = (event) => {
     const newValue = event.target.value;
     setName(newValue);
     
     // Verificar se houve mudanças
-    const hasNameChange = newValue !== (currentUser.name || '');
-    const hasDescriptionChange = description !== (currentUser.about || '');
+    const hasNameChange = newValue !== (user?.name || '');
+    const hasDescriptionChange = description !== (user?.about || '');
     setHasChanges(hasNameChange || hasDescriptionChange);
     
     console.log('📝 Nome alterado:', newValue, 'Tem mudanças:', hasNameChange || hasDescriptionChange);
@@ -43,14 +47,14 @@ export default function EditProfile({ isLoading }) {
     setDescription(newValue);
     
     // Verificar se houve mudanças
-    const hasNameChange = name !== (currentUser.name || '');
-    const hasDescriptionChange = newValue !== (currentUser.about || '');
+    const hasNameChange = name !== (user?.name || '');
+    const hasDescriptionChange = newValue !== (user?.about || '');
     setHasChanges(hasNameChange || hasDescriptionChange);
     
     console.log('📝 Descrição alterada:', newValue, 'Tem mudanças:', hasNameChange || hasDescriptionChange);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Validação básica
@@ -77,21 +81,33 @@ export default function EditProfile({ isLoading }) {
 
     console.log('📤 Enviando dados do perfil:', dataToSend);
     console.log('📊 Dados originais:', { 
-      name: currentUser.name, 
-      about: currentUser.about 
+      name: user?.name, 
+      about: user?.about 
     });
 
-    // Atualiza as informações do usuário
-    handleUpdateUser(dataToSend);
+    setIsLoading(true);
+    try {
+      // Atualiza as informações do usuário via API
+      await api.setUserInfo(dataToSend);
+      console.log('✅ Perfil atualizado com sucesso');
+      onClose();
+    } catch (error) {
+      console.error('❌ Erro ao atualizar perfil:', error);
+      alert('Erro ao atualizar perfil. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const finalLoading = isLoading || externalLoading;
 
   // Log para debug
   console.log('🔄 EditProfile render:', {
-    currentUser: currentUser?.name || 'Não carregado',
+    user: user?.name || 'Não carregado',
     name,
     description,
     hasChanges,
-    isLoading
+    isLoading: finalLoading
   });
 
   return (
@@ -113,7 +129,7 @@ export default function EditProfile({ isLoading }) {
           type="text"
           value={name}
           onChange={handleNameChange}
-          disabled={isLoading}
+          disabled={finalLoading}
         />
         <span className="popup__error" id="profile-name-error"></span>
       </label>
@@ -130,26 +146,25 @@ export default function EditProfile({ isLoading }) {
           type="text"
           value={description}
           onChange={handleDescriptionChange}
-          disabled={isLoading}
+          disabled={finalLoading}
         />
         <span className="popup__error" id="profile-about-error"></span>
       </label>
 
       <button 
-        className={`button popup__button ${isLoading || !hasChanges ? 'popup__button_disabled' : ''}`} 
+        className={`button popup__button ${finalLoading || !hasChanges ? 'popup__button_disabled' : ''}`} 
         type="submit"
-        disabled={isLoading || !hasChanges}
+        disabled={finalLoading || !hasChanges}
         title={!hasChanges ? 'Nenhuma alteração foi feita' : ''}
       >
-        {isLoading ? 'Salvando...' : 'Salvar'}
+        {finalLoading ? 'Salvando...' : 'Salvar'}
       </button>
       
       {/* Debug info - remover em produção */}
-      // eslint-disable-next-line no-undef
       {process.env.NODE_ENV === 'development' && (
         <div style={{fontSize: '12px', color: '#666', marginTop: '10px'}}>
           Debug: {hasChanges ? '✅ Há alterações' : '❌ Sem alterações'} 
-          {isLoading && ' | 🔄 Salvando...'}
+          {finalLoading && ' | 🔄 Salvando...'}
         </div>
       )}
     </form>
