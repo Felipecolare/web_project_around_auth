@@ -48,6 +48,11 @@ export default function Header() {
   return (
     <header className="header page__container">
       <nav className="nav">
+        {/* Indicador de status quando logado */}
+        {isAuthenticated && (
+          <div className="nav__status">LOGGED</div>
+        )}
+        
         <div className="nav__logo">
           <span className="nav__logo-main">Around</span>
           <span className="nav__logo-sub">The U.S.</span>

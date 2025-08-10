@@ -40,33 +40,33 @@
     text-align: center; 
   } 
    
-  .profile__card { 
-    grid-template-areas: 
-      "title button" 
-      "subtitle subtitle"; 
-    justify-content: center; 
-    max-width: 282px; 
+  .profile__info { 
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
   } 
    
-  .profile__title { 
+  .profile__name { 
     font-size: 22px; 
     line-height: 1.18; 
     text-align: center; 
   } 
    
-  .profile__subtitle { 
+  .profile__about { 
     font-size: 14px; 
     line-height: 1.21; 
     text-align: center; 
   } 
    
-  .profile__button-edit { 
+  .profile__edit-button { 
     width: 18px; 
     height: 18px; 
     background-size: 7.5px 7.5px; 
+    position: static;
+    margin: 0 auto;
   } 
    
-  .profile__button-add { 
+  .profile__add-button { 
     width: 282px; 
     margin: 0; 
   } 

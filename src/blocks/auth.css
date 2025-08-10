@@ -45,8 +45,8 @@
 .auth__input {
   background-color: transparent;
   border: none;
-  border-bottom: 2px solid #ccc;
-  color: #ccc;
+  border-bottom: 2px solid #fff;
+  color: #fff;
   font-family: 'Inter', Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
@@ -64,14 +64,16 @@
   color: #fff;
 }
 
+.auth__input::placeholder {
+  color: #fff;
+}
+
 .auth__input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.auth__input::placeholder {
-  color: #ccc;
-}
+
 
 .auth__error {
   font-family: 'Inter', Arial, sans-serif;
