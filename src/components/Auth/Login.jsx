@@ -12,30 +12,13 @@ export default function Login() {
   const { login, isLoading, authError, clearAuthError } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
 
   // Redirecionar se já estiver logado
   useEffect(() => {
     if (authError) {
       clearAuthError();
     }
-    
-    // Verificar se há mensagem de sucesso do registro
-    if (location.state?.message && location.state?.isSuccess) {
-      setSuccessMessage(location.state.message);
-      setShowSuccessMessage(true);
-      
-      // Limpar o state para não mostrar a mensagem novamente
-      navigate(location.pathname, { replace: true });
-      
-      // Esconder a mensagem após 5 segundos
-      setTimeout(() => {
-        setShowSuccessMessage(false);
-        setSuccessMessage('');
-      }, 5000);
-    }
-  }, [authError, clearAuthError, location.state, navigate]);
+  }, [authError, clearAuthError]);
 
   // Validação básica de email
   const isValidEmail = (email) => {
@@ -126,13 +109,6 @@ export default function Login() {
     <div className="auth">
       <div className="auth__container">
         <h2 className="auth__title">Entrar</h2>
-        
-        {/* Mensagem de sucesso do registro */}
-        {showSuccessMessage && (
-          <div className="auth__success-message">
-            {successMessage}
-          </div>
-        )}
         
         <form 
           className="auth__form" 
