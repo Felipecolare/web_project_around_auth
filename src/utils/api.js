@@ -272,8 +272,8 @@ if (api.hasValidToken()) {
     .then(userData => {
       console.log('✅ API funcionando! Dados do usuário:', userData);
     })
-    .catch(() => {
-      console.error('❌ Erro na API');
+    .catch(err => {
+      console.error('❌ Erro na API:', err);
       console.log('💡 Dica: Verifique se o token não expirou e se a URL da API está correta.');
     });
 } else {
