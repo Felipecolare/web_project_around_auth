@@ -57,7 +57,7 @@ class Api {
         if (errorData.message) {
           errorMessage = errorData.message;
         }
-      } catch (e) {
+      } catch {
         // Se não conseguir fazer parse do JSON, usar o texto como está
         if (text) {
           errorMessage = text;
@@ -272,8 +272,8 @@ if (api.hasValidToken()) {
     .then(userData => {
       console.log('✅ API funcionando! Dados do usuário:', userData);
     })
-    .catch(err => {
-      console.error('❌ Erro na API:', err);
+    .catch(() => {
+      console.error('❌ Erro na API');
       console.log('💡 Dica: Verifique se o token não expirou e se a URL da API está correta.');
     });
 } else {
