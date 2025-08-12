@@ -131,7 +131,8 @@
   }
 
   .popup__content_content_image {
-    max-width: 95vw;
+    max-width: 98vw;
+    max-height: 95vh;
   }
   
   .card__like-count {
