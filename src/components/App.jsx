@@ -6,7 +6,7 @@ import Footer from "./Footer/Footer.jsx";
 import Login from "./Auth/Login.jsx";
 import Register from "./Auth/Register.jsx";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.jsx";
-import { AuthProvider, useAuth } from "../contexts/AuthContext.js";
+import { AuthProvider, useAuth } from "../contexts/AuthContext.jsx";
 import api from "../utils/api.js";
 
 // Componente principal da aplicação (protegido)
@@ -17,16 +17,23 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(false);
   const { currentUser, isAuthenticated } = useAuth();
 
+  console.log('🏠 AppContent - Auth Status:', { isAuthenticated, currentUser: currentUser ? 'Presente' : 'Ausente' });
+
   // Carregar cartões quando o usuário estiver autenticado
   useEffect(() => {
+    console.log('🔄 useEffect - Verificando se deve carregar cartões:', { isAuthenticated, currentUser: currentUser ? 'Presente' : 'Ausente' });
     if (isAuthenticated && currentUser) {
+      console.log('✅ Carregando cartões...');
       loadCards();
+    } else {
+      console.log('❌ Não carregando cartões - usuário não autenticado ou dados não disponíveis');
     }
-  }, [isAuthenticated, currentUser]);
+  }, [isAuthenticated, currentUser]); // Dependências para recarregar quando mudar
 
   const loadCards = async () => {
     try {
       setIsLoading(true);
+      console.log("🔄 Iniciando carregamento de cartões...");
       const cardsData = await api.getInitialCards();
       setCards(cardsData);
       console.log("✅ Cartões carregados:", cardsData);
@@ -45,7 +52,6 @@ function AppContent() {
           _id: "2",
           name: "Lago Louise",
           link: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80",
-          owner: { _id: currentUser?._id || "default-user" },
           likes: []
         }
       ]);

@@ -24,12 +24,15 @@ export const AuthProvider = ({ children }) => {
     const checkAuthStatus = async () => {
       try {
         const token = auth.getCurrentToken();
+        console.log('🔍 Verificando token:', token ? 'Presente' : 'Ausente');
+        
         if (token) {
           // Atualizar o token na API
           api.setToken(token);
           
           // Verificar se o token é válido
           const userData = await auth.checkToken();
+          console.log('📊 Dados do usuário recebidos:', userData);
           setCurrentUser(userData.data);
           setIsAuthenticated(true);
           setAuthError(null);
@@ -37,6 +40,7 @@ export const AuthProvider = ({ children }) => {
         } else {
           setIsAuthenticated(false);
           setCurrentUser(null);
+          console.log('❌ Nenhum token encontrado');
         }
       } catch (error) {
         console.error('❌ Erro ao verificar status de autenticação:', error);
@@ -52,7 +56,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkAuthStatus();
-  }, []);
+  }, []); // Dependências vazias para executar apenas uma vez
 
   // Função para fazer login
   const login = async (credentials) => {
@@ -68,6 +72,7 @@ export const AuthProvider = ({ children }) => {
         
         // Buscar informações do usuário
         const userData = await auth.checkToken();
+        console.log('📊 Dados do usuário após login:', userData);
         setCurrentUser(userData.data);
         setIsAuthenticated(true);
         setAuthError(null);
@@ -79,6 +84,8 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('❌ Erro no login:', error);
       setAuthError(error.toString());
+      setIsAuthenticated(false);
+      setCurrentUser(null);
       return { success: false, error: error.toString() };
     } finally {
       setIsLoading(false);

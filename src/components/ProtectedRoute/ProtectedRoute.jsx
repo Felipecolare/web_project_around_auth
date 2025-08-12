@@ -6,8 +6,11 @@ export default function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
+  console.log('🔒 ProtectedRoute - Status:', { isAuthenticated, isLoading, location: location.pathname });
+
   // Mostrar loading enquanto verifica autenticação
   if (isLoading) {
+    console.log('⏳ Mostrando loading...');
     return (
       <div style={{
         display: 'flex',

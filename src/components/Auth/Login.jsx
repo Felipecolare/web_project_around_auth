@@ -18,7 +18,7 @@ export default function Login() {
     if (authError) {
       clearAuthError();
     }
-  }, [authError, clearAuthError]);
+  }, [authError, clearAuthError]); // Dependências para limpar erro
 
   // Validação básica de email
   const isValidEmail = (email) => {
@@ -95,7 +95,10 @@ export default function Login() {
     if (result.success) {
       // Redirecionar para a página de origem ou para a página principal
       const from = location.state?.from?.pathname || '/';
+      console.log('🔄 Redirecionando para:', from);
       navigate(from, { replace: true });
+    } else {
+      console.log('❌ Login falhou:', result.error);
     }
   };
 
