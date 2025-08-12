@@ -126,10 +126,9 @@ export default function Main({
       )}
 
       {selectedCard && (
-        <ImagePopup 
-          card={selectedCard} 
-          onClose={onClosePopup}
-        />
+        <Popup onClose={onClosePopup}>
+          <ImagePopup card={selectedCard} />
+        </Popup>
       )}
     </main>
   );
