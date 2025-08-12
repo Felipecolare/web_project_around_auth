@@ -1,11 +1,17 @@
 // ===== src/utils/api.js =====
+// Classe principal da API para gerenciar todas as operações com o servidor
 class Api {
   constructor({ baseUrl, headers }) {
     this._baseUrl = baseUrl;
     this._headers = headers;
   }
 
-  // Método para atualizar o token de autorização
+  // ===== MÉTODOS DE AUTENTICAÇÃO E TOKEN =====
+  
+  /**
+   * Atualiza o token de autorização nos headers
+   * @param {string} token - Token JWT para autenticação
+   */
   setToken(token) {
     if (token) {
       this._headers.authorization = `Bearer ${token}`;
@@ -16,17 +22,60 @@ class Api {
     }
   }
 
-  // Método para obter o token atual
+  /**
+   * Obtém o token atual dos headers
+   * @returns {string|null} Token JWT ou null se não existir
+   */
   getToken() {
     return this._headers.authorization ? this._headers.authorization.split(' ')[1] : null;
   }
 
-  // Método para verificar se há um token válido
+  /**
+   * Verifica se há um token válido
+   * @returns {boolean} true se o token existir
+   */
   hasValidToken() {
     const token = this.getToken();
     return !!token;
   }
 
+  /**
+   * Verifica se o token JWT está válido e não expirou
+   * @returns {boolean} true se o token for válido
+   */
+  _checkTokenValidity() {
+    try {
+      const token = this.getToken();
+      if (!token) {
+        console.warn('⚠️ Nenhum token encontrado!');
+        return false;
+      }
+      
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      
+      if (payload.exp && payload.exp < currentTime) {
+        console.warn('⚠️ Token JWT expirado!');
+        console.warn('Expiração:', new Date(payload.exp * 1000));
+        console.warn('Tempo atual:', new Date());
+        return false;
+      }
+      
+      console.log('✅ Token JWT válido até:', new Date(payload.exp * 1000));
+      return true;
+    } catch (error) {
+      console.error('❌ Erro ao verificar token:', error);
+      return false;
+    }
+  }
+
+  // ===== MÉTODOS INTERNOS DE REQUISIÇÃO =====
+  
+  /**
+   * Verifica e processa a resposta da API
+   * @param {Response} res - Objeto de resposta do fetch
+   * @returns {Promise} Promise com dados ou erro
+   */
   _checkResponse(res) {
     if (res.ok) {
       return res.json();
@@ -37,7 +86,7 @@ class Api {
     console.error('URL:', res.url);
     console.error('Headers da resposta:', Object.fromEntries(res.headers.entries()));
     
-    // Verificar se é erro de autenticação
+    // Verificar erros específicos
     if (res.status === 401) {
       console.error('🔑 Token provavelmente expirado ou inválido');
       return Promise.reject(`Erro de autenticação (${res.status}): Token expirado ou inválido. Faça login novamente.`);
@@ -57,8 +106,7 @@ class Api {
         if (errorData.message) {
           errorMessage = errorData.message;
         }
-      } catch {
-        // Se não conseguir fazer parse do JSON, usar o texto como está
+      } catch (e) { // eslint-disable-line no-unused-vars
         if (text) {
           errorMessage = text;
         }
@@ -68,6 +116,12 @@ class Api {
     });
   }
 
+  /**
+   * Executa uma requisição HTTP para a API
+   * @param {string} url - URL da requisição
+   * @param {Object} options - Opções da requisição (method, headers, body)
+   * @returns {Promise} Promise com a resposta processada
+   */
   _request(url, options) {
     console.log('🔄 Fazendo requisição para:', url);
     console.log('📋 Opções:', {
@@ -84,35 +138,12 @@ class Api {
       });
   }
 
-  // Método para verificar se o token está válido
-  _checkTokenValidity() {
-    // Decodificar o token JWT para verificar expiração
-    try {
-      const token = this.getToken();
-      if (!token) {
-        console.warn('⚠️ Nenhum token encontrado!');
-        return false;
-      }
-      
-      const payload = JSON.parse(atob(token.split('.')[1])); // Decodifica o payload
-      const currentTime = Math.floor(Date.now() / 1000); // Tempo atual em segundos
-      
-      if (payload.exp && payload.exp < currentTime) {
-        console.warn('⚠️ Token JWT expirado!');
-        console.warn('Expiração:', new Date(payload.exp * 1000));
-        console.warn('Tempo atual:', new Date());
-        return false;
-      }
-      
-      console.log('✅ Token JWT válido até:', new Date(payload.exp * 1000));
-      return true;
-    } catch (error) {
-      console.error('❌ Erro ao verificar token:', error);
-      return false; // Se não conseguir decodificar, assume que o token é inválido
-    }
-  }
-
-  // Método para obter informações do usuário
+  // ===== MÉTODOS DE USUÁRIO =====
+  
+  /**
+   * Obtém informações do usuário logado
+   * @returns {Promise} Promise com dados do usuário
+   */
   getUserInfo() {
     console.log('🔍 Buscando informações do usuário...');
     
@@ -129,7 +160,13 @@ class Api {
     });
   }
 
-  // Método para atualizar informações do usuário
+  /**
+   * Atualiza informações do usuário
+   * @param {Object} userData - Dados do usuário
+   * @param {string} userData.name - Nome do usuário
+   * @param {string} userData.about - Descrição do usuário
+   * @returns {Promise} Promise com dados atualizados
+   */
   setUserInfo({ name, about }) {
     console.log('📝 Atualizando informações do usuário:', { name, about });
     
@@ -140,14 +177,36 @@ class Api {
     return this._request(`${this._baseUrl}/users/me`, {
       method: "PATCH",
       headers: this._headers,
-      body: JSON.stringify({
-        name,
-        about,
-      }),
+      body: JSON.stringify({ name, about }),
     });
   }
 
-  // Método para obter todos os cartões
+  /**
+   * Atualiza o avatar do usuário
+   * @param {Object} avatarData - Dados do avatar
+   * @param {string} avatarData.avatar - URL do novo avatar
+   * @returns {Promise} Promise com dados atualizados
+   */
+  setUserAvatar({ avatar }) {
+    console.log('🖼️ Atualizando avatar do usuário:', avatar);
+    
+    if (!this._checkTokenValidity()) {
+      return Promise.reject('Token expirado. Faça login novamente.');
+    }
+    
+    return this._request(`${this._baseUrl}/users/me/avatar`, {
+      method: "PATCH",
+      headers: this._headers,
+      body: JSON.stringify({ avatar }),
+    });
+  }
+
+  // ===== MÉTODOS DE CARTÕES =====
+  
+  /**
+   * Obtém todos os cartões da API
+   * @returns {Promise} Promise com array de cartões
+   */
   getInitialCards() {
     console.log('🃏 Buscando cartões...');
     
@@ -160,7 +219,13 @@ class Api {
     });
   }
 
-  // Método para adicionar um novo cartão
+  /**
+   * Adiciona um novo cartão
+   * @param {Object} cardData - Dados do cartão
+   * @param {string} cardData.name - Nome do cartão
+   * @param {string} cardData.link - URL da imagem do cartão
+   * @returns {Promise} Promise com o cartão criado
+   */
   addCard({ name, link }) {
     console.log('➕ Adicionando novo cartão:', { name, link });
     
@@ -171,14 +236,15 @@ class Api {
     return this._request(`${this._baseUrl}/cards`, {
       method: "POST",
       headers: this._headers,
-      body: JSON.stringify({
-        name,
-        link,
-      }),
+      body: JSON.stringify({ name, link }),
     });
   }
 
-  // Método para deletar um cartão
+  /**
+   * Remove um cartão pelo ID
+   * @param {string} cardId - ID do cartão a ser removido
+   * @returns {Promise} Promise com confirmação da remoção
+   */
   deleteCard(cardId) {
     console.log('🗑️ Deletando cartão:', cardId);
     
@@ -192,7 +258,13 @@ class Api {
     });
   }
 
-  // Método para curtir um cartão
+  // ===== MÉTODOS DE CURTIDAS =====
+  
+  /**
+   * Adiciona uma curtida ao cartão
+   * @param {string} cardId - ID do cartão
+   * @returns {Promise} Promise com dados atualizados do cartão
+   */
   likeCard(cardId) {
     console.log('❤️ Curtindo cartão:', cardId);
     
@@ -206,7 +278,11 @@ class Api {
     });
   }
 
-  // Método para descurtir um cartão
+  /**
+   * Remove uma curtida do cartão
+   * @param {string} cardId - ID do cartão
+   * @returns {Promise} Promise com dados atualizados do cartão
+   */
   dislikeCard(cardId) {
     console.log('💔 Descurtindo cartão:', cardId);
     
@@ -220,7 +296,12 @@ class Api {
     });
   }
 
-  // Método para alterar curtida (like/dislike)
+  /**
+   * Altera o status de curtida de um cartão
+   * @param {string} cardId - ID do cartão
+   * @param {boolean} isLiked - true se já está curtido, false se não
+   * @returns {Promise} Promise com dados atualizados do cartão
+   */
   changeLikeCardStatus(cardId, isLiked) {
     console.log('💝 Alterando status do like:', cardId, isLiked ? 'descurtir' : 'curtir');
     
@@ -233,25 +314,9 @@ class Api {
       headers: this._headers,
     });
   }
-
-  // Método para atualizar avatar do usuário
-  setUserAvatar({ avatar }) {
-    console.log('🖼️ Atualizando avatar do usuário:', avatar);
-    
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
-    
-    return this._request(`${this._baseUrl}/users/me/avatar`, {
-      method: "PATCH",
-      headers: this._headers,
-      body: JSON.stringify({
-        avatar,
-      }),
-    });
-  }
 }
 
+// ===== INSTÂNCIA DA API =====
 // Criando uma instância da API com os parâmetros necessários
 const api = new Api({
   baseUrl: "https://se-register-api.en.tripleten-services.com/v1",
@@ -261,7 +326,7 @@ const api = new Api({
   },
 });
 
-// Teste imediato da API com informações detalhadas
+// ===== TESTE INICIAL DA API =====
 console.log('🧪 Testando conexão da API...');
 console.log('🔗 URL base:', api._baseUrl);
 console.log('🎯 Headers:', api._headers);
