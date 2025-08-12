@@ -44,14 +44,38 @@ function AppContent() {
         {
           _id: "1",
           name: "Vale de Yosemite",
-          link: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80",
+          link: "/src/images/vale_yosemite.png",
           owner: { _id: currentUser?._id || "default-user" },
           likes: []
         },
         {
           _id: "2",
           name: "Lago Louise",
-          link: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80",
+          link: "/src/images/lago_louise.png",
+          likes: []
+        },
+        {
+          _id: "3",
+          name: "Montanhas Carpathian",
+          link: "/src/images/montanhas_care.png",
+          likes: []
+        },
+        {
+          _id: "4",
+          name: "Latemar",
+          link: "/src/images/latemar.png",
+          likes: []
+        },
+        {
+          _id: "5",
+          name: "Parque Nacional",
+          link: "/src/images/parque_nacional.png",
+          likes: []
+        },
+        {
+          _id: "6",
+          name: "Lago di Braies",
+          link: "/src/images/lago_di_braies.png",
           likes: []
         }
       ]);

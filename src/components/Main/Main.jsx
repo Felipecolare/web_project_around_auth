@@ -28,7 +28,7 @@ export default function Main({
           <div className="profile__avatar-container">
             <img
               className="profile__avatar"
-              src={currentUser?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"}
+              src={currentUser?.avatar || "/src/images/jacques_cousteau.png"}
               alt="Avatar do usuário"
             />
             <button
