@@ -33,6 +33,62 @@
   align-items: center; /* Centralizar horizontalmente */
 } 
 
+/* Estilos específicos para popup de edição de avatar */
+.popup__content:has(.popup__form[name="avatar-form"]) {
+  background-color: #fff !important;
+  min-width: 550px !important;
+  min-height: 400px !important;
+  border: 2px solid #f0f0f0 !important;
+  border-radius: 20px !important;
+  box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.15) !important;
+  z-index: 1000 !important;
+}
+
+/* Estilos específicos para popup de edição de avatar - alternativa sem :has() */
+.popup__content.popup__content_avatar {
+  background-color: #fff !important;
+  min-width: 550px !important;
+  min-height: 400px !important;
+  border: 2px solid #f0f0f0 !important;
+  border-radius: 20px !important;
+  box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.15) !important;
+  z-index: 1000 !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 40px 45px 45px !important;
+}
+
+/* Forçar visibilidade do popup de avatar */
+.popup__content_avatar * {
+  background-color: transparent !important;
+}
+
+.popup__content_avatar .popup__form {
+  background-color: transparent !important;
+  width: 100% !important;
+  max-width: 400px !important;
+}
+
+/* Estilo final para popup de avatar */
+.popup__content_avatar {
+  background-color: #fff !important;
+  min-width: 550px !important;
+  min-height: 400px !important;
+  border: 2px solid #f0f0f0 !important;
+  border-radius: 20px !important;
+  box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.15) !important;
+  z-index: 1000 !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 40px 45px 45px !important;
+}
+
 .popup__content { 
   position: relative; 
   max-width: 430px; 
@@ -208,8 +264,6 @@
   padding: 0 !important;
   min-width: auto !important;
   min-height: auto !important;
-  max-width: none !important;
-  max-height: none !important;
 }
 
 .popup__content_content_image {

@@ -118,13 +118,18 @@ export default function Main({
       )}
 
       {popup === 'edit-avatar' && (
-        <Popup onClose={onClosePopup}>
-          <EditAvatar
-            onClose={onClosePopup}
-            currentUser={currentUser}
-            isLoading={isLoading}
-          />
-        </Popup>
+        <div>
+          {console.log('🔍 Renderizando popup edit-avatar, popup:', popup)}
+          {console.log('🔍 onClosePopup:', onClosePopup)}
+          {console.log('🔍 currentUser:', currentUser)}
+          <Popup onClose={onClosePopup} className="popup__content_avatar">
+            <EditAvatar
+              onClose={onClosePopup}
+              currentUser={currentUser}
+              isLoading={isLoading}
+            />
+          </Popup>
+        </div>
       )}
 
       {selectedCard && (

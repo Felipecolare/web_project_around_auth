@@ -1,12 +1,17 @@
 // ===== src/components/Popup/EditAvatar.jsx =====
-import { useRef, useContext } from 'react';
-import CurrentUserContext from '../../contexts/CurrentUserContext';
+import { useRef, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../utils/api';
 
-export default function EditAvatar({ isLoading }) {
-  const { handleUpdateAvatar } = useContext(CurrentUserContext);
+export default function EditAvatar({ onClose, isLoading: externalLoading }) {
+  const { currentUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const avatarRef = useRef();
 
-  function handleSubmit(e) {
+  // Log para debug
+  console.log('🔍 EditAvatar renderizado:', { onClose, externalLoading, currentUser });
+
+  async function handleSubmit(e) {
     e.preventDefault();
     
     const avatarUrl = avatarRef.current.value.trim();
@@ -27,11 +32,21 @@ export default function EditAvatar({ isLoading }) {
 
     console.log('📝 Enviando novo avatar:', avatarUrl);
 
-    // Enviar dados para o contexto usando o valor da entrada obtido com ref
-    handleUpdateAvatar({
-      avatar: avatarUrl,
-    });
+    setIsLoading(true);
+    try {
+      // Atualizar avatar via API
+      await api.setUserAvatar({ avatar: avatarUrl });
+      console.log('✅ Avatar atualizado com sucesso');
+      onClose();
+    } catch (error) {
+      console.error('❌ Erro ao atualizar avatar:', error);
+      alert('Erro ao atualizar avatar. Verifique a URL da imagem e tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
   }
+
+  const finalLoading = isLoading || externalLoading;
 
   return (
     <form
@@ -49,17 +64,17 @@ export default function EditAvatar({ isLoading }) {
           required
           type="url"
           ref={avatarRef}
-          disabled={isLoading}
+          disabled={finalLoading}
         />
         <span className="popup__error" id="avatar-link-error"></span>
       </label>
 
       <button 
-        className={`button popup__button ${isLoading ? 'popup__button_disabled' : ''}`} 
+        className={`button popup__button ${finalLoading ? 'popup__button_disabled' : ''}`} 
         type="submit"
-        disabled={isLoading}
+        disabled={finalLoading}
       >
-        {isLoading ? 'Salvando...' : 'Salvar'}
+        {finalLoading ? 'Salvando...' : 'Salvar'}
       </button>
     </form>
   );
