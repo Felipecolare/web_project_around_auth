@@ -9,11 +9,13 @@ export default function ImagePopup({ card, onClose }) {
           type="button"
           onClick={onClose}
         />
-        <img
-          className="popup__image"
-          src={card?.link}
-          alt={card?.name}
-        />
+        <div className="popup__image-container">
+          <img
+            className="popup__image"
+            src={card?.link}
+            alt={card?.name}
+          />
+        </div>
         <p className="popup__caption">{card?.name}</p>
       </div>
     </div>

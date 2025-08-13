@@ -1,7 +1,7 @@
 // ===== src/components/Popup/NewCard.jsx =====
 import { useState, useEffect } from 'react';
 
-export default function NewCard({ onAddPlaceSubmit, isLoading }) {
+export default function NewCard({ onClose, onSubmit, isLoading }) {
   const [name, setName] = useState('');
   const [link, setLink] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
@@ -79,7 +79,7 @@ export default function NewCard({ onAddPlaceSubmit, isLoading }) {
     console.log('📤 Enviando dados do cartão:', cardData);
 
     // Enviar dados para o App através da prop onAddPlaceSubmit
-    onAddPlaceSubmit(cardData);
+    onSubmit(cardData);
 
     // IMPORTANTE: NÃO limpar formulário aqui
     // O formulário só deve ser limpo quando o popup for fechado com sucesso

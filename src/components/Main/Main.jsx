@@ -18,6 +18,7 @@ export default function Main({
   selectedCard,
   isLoading,
   onAddPlaceSubmit,
+  onUpdateUser,
 }) {
   const { currentUser } = useAuth();
 
@@ -111,6 +112,7 @@ export default function Main({
             onClose={onClosePopup}
             currentUser={currentUser}
             isLoading={isLoading}
+            onUpdateUser={onUpdateUser}
           />
         </Popup>
       )}
@@ -126,9 +128,7 @@ export default function Main({
       )}
 
       {selectedCard && (
-        <Popup onClose={onClosePopup}>
-          <ImagePopup card={selectedCard} />
-        </Popup>
+        <ImagePopup card={selectedCard} onClose={onClosePopup} />
       )}
     </main>
   );

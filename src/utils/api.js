@@ -170,6 +170,10 @@ class Api {
   setUserInfo({ name, about }) {
     console.log('📝 Atualizando informações do usuário:', { name, about });
     
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
+    }
+    
     if (!this._checkTokenValidity()) {
       return Promise.reject('Token expirado. Faça login novamente.');
     }
@@ -189,6 +193,10 @@ class Api {
    */
   setUserAvatar({ avatar }) {
     console.log('🖼️ Atualizando avatar do usuário:', avatar);
+    
+    if (!this.hasValidToken()) {
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
+    }
     
     if (!this._checkTokenValidity()) {
       return Promise.reject('Token expirado. Faça login novamente.');
@@ -210,10 +218,19 @@ class Api {
   getInitialCards() {
     console.log('🃏 Buscando cartões...');
     
+    // Se não há token válido, não tentar fazer requisição
+    if (!this.hasValidToken()) {
+      console.log('ℹ️ Sem token, não é possível buscar cartões da API');
+      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
+    }
+    
+    // Verificar se o token é válido
     if (!this._checkTokenValidity()) {
+      console.log('⚠️ Token expirado, não é possível buscar cartões da API');
       return Promise.reject('Token expirado. Faça login novamente.');
     }
     
+    console.log('🔑 Usando token válido para buscar cartões');
     return this._request(`${this._baseUrl}/cards`, {
       headers: this._headers,
     });
@@ -319,30 +336,10 @@ class Api {
 // ===== INSTÂNCIA DA API =====
 // Criando uma instância da API com os parâmetros necessários
 const api = new Api({
-  baseUrl: "https://se-register-api.en.tripleten-services.com/v1",
+  baseUrl: "https://around.nomoreparties.co/v1",
   headers: {
-    authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzQyMWZjODcxZWNiMzAwMWVmOTQ1MjciLCJpYXQiOjE3MzI0MDI0NTZ9.QPlus1HCvJGqhYGlqQJdRCM-LqJn6I1OJ2fKN1t-DqE",
     "Content-Type": "application/json",
   },
 });
-
-// ===== TESTE INICIAL DA API =====
-console.log('🧪 Testando conexão da API...');
-console.log('🔗 URL base:', api._baseUrl);
-console.log('🎯 Headers:', api._headers);
-
-// Verificar se o token está válido antes de testar
-if (api.hasValidToken()) {
-  api.getUserInfo()
-    .then(userData => {
-      console.log('✅ API funcionando! Dados do usuário:', userData);
-    })
-    .catch(err => {
-      console.error('❌ Erro na API:', err);
-      console.log('💡 Dica: Verifique se o token não expirou e se a URL da API está correta.');
-    });
-} else {
-  console.error('❌ Nenhum token de autorização encontrado. Não é possível testar a API.');
-}
 
 export default api;

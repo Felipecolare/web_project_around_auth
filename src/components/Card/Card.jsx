@@ -34,12 +34,14 @@ export default function Card(props) {
   
   return (
     <li className="card">
-      <img 
-        className="card__image" 
-        src={link} 
-        alt={name}
-        onClick={handleImageClick}
-      />
+      <div className="card__image-container">
+        <img 
+          className="card__image" 
+          src={link} 
+          alt={name}
+          onClick={handleImageClick}
+        />
+      </div>
       
       {/* Botão de delete só aparece se o cartão for do usuário atual */}
       {isOwn && (

@@ -15,7 +15,7 @@ function AppContent() {
   const [popup, setPopup] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { currentUser, isAuthenticated } = useAuth();
+  const { currentUser, isAuthenticated, updateUser } = useAuth();
 
   console.log('🏠 AppContent - Auth Status:', { isAuthenticated, currentUser: currentUser ? 'Presente' : 'Ausente' });
 
@@ -34,11 +34,64 @@ function AppContent() {
     try {
       setIsLoading(true);
       console.log("🔄 Iniciando carregamento de cartões...");
+      
+      // Se não há usuário autenticado, usar cartões padrão
+      if (!currentUser) {
+        console.log("ℹ️ Usuário não autenticado, usando cartões padrão");
+        setCards([
+          {
+            _id: "1",
+            name: "Vale de Yosemite",
+            link: "/src/images/vale_yosemite.png",
+            owner: { _id: "default-user" },
+            likes: []
+          },
+          {
+            _id: "2",
+            name: "Lago Louise",
+            link: "/src/images/lago_louise.png",
+            owner: { _id: "default-user" },
+            likes: []
+          },
+          {
+            _id: "3",
+            name: "Montanhas Carpathian",
+            link: "/src/images/montanhas_care.png",
+            owner: { _id: "default-user" },
+            likes: []
+          },
+          {
+            _id: "4",
+            name: "Latemar",
+            link: "/src/images/latemar.png",
+            owner: { _id: "default-user" },
+            likes: []
+          },
+          {
+            _id: "5",
+            name: "Parque Nacional",
+            link: "/src/images/parque_nacional.png",
+            owner: { _id: "default-user" },
+            likes: []
+          },
+          {
+            _id: "6",
+            name: "Lago di Braies",
+            link: "/src/images/lago_di_braies.png",
+            owner: { _id: "default-user" },
+            likes: []
+          }
+        ]);
+        return;
+      }
+      
+      // Se há usuário autenticado, tentar carregar da API
+      console.log("🔑 Usuário autenticado, tentando carregar cartões da API...");
       const cardsData = await api.getInitialCards();
       setCards(cardsData);
-      console.log("✅ Cartões carregados:", cardsData);
+      console.log("✅ Cartões carregados da API:", cardsData);
     } catch (error) {
-      console.error("❌ Erro ao carregar cartões:", error);
+      console.error("❌ Erro ao carregar cartões da API, usando padrão:", error);
       // Em caso de erro, usar cartões padrão
       setCards([
         {
@@ -52,30 +105,35 @@ function AppContent() {
           _id: "2",
           name: "Lago Louise",
           link: "/src/images/lago_louise.png",
+          owner: { _id: currentUser?._id || "default-user" },
           likes: []
         },
         {
           _id: "3",
           name: "Montanhas Carpathian",
           link: "/src/images/montanhas_care.png",
+          owner: { _id: currentUser?._id || "default-user" },
           likes: []
         },
         {
           _id: "4",
           name: "Latemar",
           link: "/src/images/latemar.png",
+          owner: { _id: currentUser?._id || "default-user" },
           likes: []
         },
         {
           _id: "5",
           name: "Parque Nacional",
           link: "/src/images/parque_nacional.png",
+          owner: { _id: currentUser?._id || "default-user" },
           likes: []
         },
         {
           _id: "6",
           name: "Lago di Braies",
           link: "/src/images/lago_di_braies.png",
+          owner: { _id: currentUser?._id || "default-user" },
           likes: []
         }
       ]);
@@ -89,6 +147,17 @@ function AppContent() {
     try {
       const newData = await api.setUserInfo(data);
       console.log("✅ Usuário atualizado com sucesso:", newData);
+      
+      // Atualizar o usuário no contexto
+      if (newData && newData.data) {
+        // Atualizar o usuário no contexto
+        updateUser({
+          ...currentUser,
+          name: newData.data.name,
+          about: newData.data.about
+        });
+      }
+      
       handleClosePopup();
     } catch (error) {
       console.error("❌ Erro ao atualizar usuário:", error);
@@ -177,6 +246,7 @@ function AppContent() {
         selectedCard={selectedCard}
         isLoading={isLoading}
         onAddPlaceSubmit={handleAddPlaceSubmit}
+        onUpdateUser={handleUpdateUser}
       />
       <Footer />
     </div>

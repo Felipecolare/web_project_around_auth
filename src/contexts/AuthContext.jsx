@@ -126,6 +126,12 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null);
   };
 
+  // Função para atualizar dados do usuário
+  const updateUser = (userData) => {
+    setCurrentUser(userData);
+    console.log('✅ Usuário atualizado no contexto:', userData);
+  };
+
   const value = {
     isAuthenticated,
     currentUser,
@@ -135,6 +141,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     clearAuthError,
+    updateUser,
   };
 
   return (

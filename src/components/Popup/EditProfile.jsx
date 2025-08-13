@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../utils/api';
 
-export default function EditProfile({ onClose, currentUser, isLoading: externalLoading }) {
+export default function EditProfile({ onClose, currentUser, isLoading: externalLoading, onUpdateUser }) {
   const { currentUser: authUser } = useAuth();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -88,7 +88,7 @@ export default function EditProfile({ onClose, currentUser, isLoading: externalL
     setIsLoading(true);
     try {
       // Atualiza as informações do usuário via API
-      await api.setUserInfo(dataToSend);
+      await onUpdateUser(dataToSend);
       console.log('✅ Perfil atualizado com sucesso');
       onClose();
     } catch (error) {
