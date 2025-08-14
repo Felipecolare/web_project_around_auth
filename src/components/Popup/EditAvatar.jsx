@@ -1,9 +1,8 @@
 // ===== src/components/Popup/EditAvatar.jsx =====
 import { useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import api from '../../utils/api';
 
-export default function EditAvatar({ onClose, isLoading: externalLoading }) {
+export default function EditAvatar({ onClose, onSubmit, isLoading: externalLoading }) {
   const { currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const avatarRef = useRef();
@@ -34,10 +33,9 @@ export default function EditAvatar({ onClose, isLoading: externalLoading }) {
 
     setIsLoading(true);
     try {
-      // Atualizar avatar via API
-      await api.setUserAvatar({ avatar: avatarUrl });
+      // Chamar a função onSubmit passada como prop
+      await onSubmit({ avatar: avatarUrl });
       console.log('✅ Avatar atualizado com sucesso');
-      onClose();
     } catch (error) {
       console.error('❌ Erro ao atualizar avatar:', error);
       alert('Erro ao atualizar avatar. Verifique a URL da imagem e tente novamente.');

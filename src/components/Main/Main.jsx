@@ -19,6 +19,7 @@ export default function Main({
   isLoading,
   onAddPlaceSubmit,
   onUpdateUser,
+  onUpdateAvatar,
 }) {
   const { currentUser } = useAuth();
 
@@ -127,6 +128,7 @@ export default function Main({
               onClose={onClosePopup}
               currentUser={currentUser}
               isLoading={isLoading}
+              onSubmit={onUpdateAvatar}
             />
           </Popup>
         </div>

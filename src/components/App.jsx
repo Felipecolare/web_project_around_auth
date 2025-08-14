@@ -172,6 +172,15 @@ function AppContent() {
     try {
       const newData = await api.setUserAvatar(data);
       console.log("✅ Avatar atualizado com sucesso:", newData);
+      
+      // Atualizar o usuário no contexto
+      if (newData && newData.data) {
+        updateUser({
+          ...currentUser,
+          avatar: newData.data.avatar
+        });
+      }
+      
       handleClosePopup();
     } catch (error) {
       console.error("❌ Erro ao atualizar avatar:", error);
@@ -247,6 +256,7 @@ function AppContent() {
         isLoading={isLoading}
         onAddPlaceSubmit={handleAddPlaceSubmit}
         onUpdateUser={handleUpdateUser}
+        onUpdateAvatar={handleUpdateAvatar}
       />
       <Footer />
     </div>

@@ -37,6 +37,38 @@
   opacity: 0.8;
 }
 
+.profile__avatar-edit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 26px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile__avatar-edit::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15.2353 0.765303C14.7821 0.312767 14.1678 0.0588989 13.5273 0.0588989C12.8869 0.0588989 12.2726 0.312767 11.8193 0.765303L0.619337 11.9653C0.421209 12.1636 0.264498 12.4 0.158397 12.6613L0.00839636 13.9613C-0.0156009 14.0886 0.00454206 14.2198 0.0642614 14.3349C0.124006 14.45 0.21914 14.5448 0.334423 14.6048C0.405 14.6381 0.4825 14.6553 0.561 14.6553C0.590942 14.6553 0.620737 14.6527 0.650171 14.6476L1.95 14.4976C2.21133 14.3915 2.44767 14.2348 2.646 14.0366L13.846 2.83663C14.2985 2.38338 14.5524 1.76906 14.5524 1.12863C14.5524 0.488203 14.2985 -0.126122 13.846 -0.579368L15.2353 0.765303Z' fill='white'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.profile__avatar-container:hover .profile__avatar-edit {
+  opacity: 1;
+}
+
 .profile__text {
   display: flex;
   flex-direction: column;
