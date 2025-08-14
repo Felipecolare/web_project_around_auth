@@ -14,10 +14,10 @@ class Api {
    */
   setToken(token) {
     if (token) {
-      this._headers.Authorization = `Bearer ${token}`;
+      this._headers.authorization = `Bearer ${token}`;
       console.log('🔑 Token de autorização atualizado na API');
     } else {
-      delete this._headers.Authorization;
+      delete this._headers.authorization;
       console.log('🔑 Token de autorização removido da API');
     }
   }
@@ -27,7 +27,7 @@ class Api {
    * @returns {string|null} Token JWT ou null se não existir
    */
   getToken() {
-    return this._headers.Authorization ? this._headers.Authorization.split(' ')[1] : null;
+    return this._headers.authorization ? this._headers.authorization.split(' ')[1] : null;
   }
 
   /**
@@ -129,6 +129,13 @@ class Api {
       headers: options.headers,
       body: options.body ? 'Dados presentes' : 'Sem dados'
     });
+    
+    // Log authorization header specifically for debugging
+    if (options.headers && options.headers.authorization) {
+      console.log('🔑 Authorization header presente:', options.headers.authorization.substring(0, 20) + '...');
+    } else {
+      console.log('⚠️ Nenhum authorization header encontrado!');
+    }
     
     return fetch(url, options)
       .then(this._checkResponse)
@@ -354,7 +361,7 @@ export const getUserAuth = (token) => {
 const api = new Api({
   baseUrl: "https://around-api.pt-br.tripleten-services.com/v1",
   headers: {
-    Authorization: "18003886-b213-4054-97f5-79797a7a7bca",
+    authorization: "18003886-b213-4054-97f5-79797a7a7bca",
     "Content-Type": "application/json",
   },
 });

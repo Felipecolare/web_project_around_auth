@@ -35,17 +35,20 @@ function App() {
       return;
     }
 
+    // Set token in API headers immediately when found in localStorage
+    api.setToken(jwt);
+
     getUserAuth(jwt).then((response) => {
       if (response && response.data) {
         const email = { email: response.data.email };
         setCurrentUser((prevData) => ({ ...prevData, ...email }));
         setIsLoggedIn(true);
-        api.setToken(jwt);
         navigate("/");
       }
     }).catch((error) => {
       console.error("Erro ao verificar token:", error);
       removeToken();
+      api.setToken(null); // Clear token from API headers
     });
   }, [navigate]);
 
@@ -131,7 +134,9 @@ function App() {
       .signin(email, password)
       .then((response) => {
         if (response.token) {
+          // First save token to localStorage
           setToken(response.token);
+          // Then set token in API headers
           api.setToken(response.token);
           setIsLoggedIn(true);
           navigate("/");
