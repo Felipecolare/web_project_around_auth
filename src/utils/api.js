@@ -335,8 +335,9 @@ class Api {
 
 // ===== INSTÂNCIA DA API =====
 // Criando uma instância da API com os parâmetros necessários
+// UNIFICADO: Usando a mesma URL da API de autenticação para compatibilidade
 const api = new Api({
-  baseUrl: "https://around.nomoreparties.co/v1",
+  baseUrl: "https://se-register-api.en.tripleten-services.com/v1",
   headers: {
     "Content-Type": "application/json",
   },

@@ -33,10 +33,10 @@ export const AuthProvider = ({ children }) => {
           // Verificar se o token é válido
           const userData = await auth.checkToken();
           console.log('📊 Dados do usuário recebidos:', userData);
-          setCurrentUser(userData.data);
+          setCurrentUser(userData.data || userData);
           setIsAuthenticated(true);
           setAuthError(null);
-          console.log('✅ Usuário autenticado:', userData.data);
+          console.log('✅ Usuário autenticado:', userData.data || userData);
         } else {
           setIsAuthenticated(false);
           setCurrentUser(null);
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
         // Buscar informações do usuário
         const userData = await auth.checkToken();
         console.log('📊 Dados do usuário após login:', userData);
-        setCurrentUser(userData.data);
+        setCurrentUser(userData.data || userData);
         setIsAuthenticated(true);
         setAuthError(null);
         console.log('✅ Login realizado com sucesso');

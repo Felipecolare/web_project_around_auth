@@ -92,6 +92,13 @@ function AppContent() {
       console.log("✅ Cartões carregados da API:", cardsData);
     } catch (error) {
       console.error("❌ Erro ao carregar cartões da API, usando padrão:", error);
+      
+      // Verificar se é erro de compatibilidade entre APIs
+      if (error.includes('Token') || error.includes('401') || error.includes('403')) {
+        console.warn("🔐 POSSÍVEL PROBLEMA: Token da API de auth pode não ser compatível com API principal");
+        console.warn("🔧 Solução: Verificar se ambas APIs aceitam o mesmo formato de token");
+      }
+      
       // Em caso de erro, usar cartões padrão
       setCards([
         {
