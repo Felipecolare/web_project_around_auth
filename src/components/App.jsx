@@ -2,7 +2,7 @@ import Header from "./Header/Header.jsx";
 import Main from "./Main/Main.jsx";
 import Footer from "./Footer/Footer.jsx";
 import { useState, useEffect } from "react";
-import api, { getUserAuth } from "../utils/api.js";
+import api from "../utils/api.js";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import { CardsContext } from "../contexts/CardsContext.js";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.jsx";
@@ -38,7 +38,7 @@ function App() {
     // Set token in API headers immediately when found in localStorage
     api.setToken(jwt);
 
-    getUserAuth(jwt).then((response) => {
+    auth.getUserAuth(jwt).then((response) => {
       if (response && response.data) {
         const email = { email: response.data.email };
         setCurrentUser((prevData) => ({ ...prevData, ...email }));

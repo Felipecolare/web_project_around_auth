@@ -198,7 +198,7 @@ class Api {
    * @param {string} avatarData.avatar - URL do novo avatar
    * @returns {Promise} Promise com dados atualizados
    */
-  setUserAvatar({ avatar }) {
+  setAvatar({ avatar }) {
     console.log('🖼️ Atualizando avatar do usuário:', avatar);
     
     if (!this.hasValidToken()) {
@@ -250,7 +250,7 @@ class Api {
    * @param {string} cardData.link - URL da imagem do cartão
    * @returns {Promise} Promise com o cartão criado
    */
-  addCard({ name, link }) {
+  newCard({ name, link }) {
     console.log('➕ Adicionando novo cartão:', { name, link });
     
     if (!this._checkTokenValidity()) {
@@ -289,7 +289,7 @@ class Api {
    * @param {string} cardId - ID do cartão
    * @returns {Promise} Promise com dados atualizados do cartão
    */
-  likeCard(cardId) {
+  likedCard(cardId) {
     console.log('❤️ Curtindo cartão:', cardId);
     
     if (!this._checkTokenValidity()) {
@@ -307,7 +307,7 @@ class Api {
    * @param {string} cardId - ID do cartão
    * @returns {Promise} Promise com dados atualizados do cartão
    */
-  dislikeCard(cardId) {
+  unlikedCard(cardId) {
     console.log('💔 Descurtindo cartão:', cardId);
     
     if (!this._checkTokenValidity()) {
@@ -340,22 +340,7 @@ class Api {
   }
 }
 
-// ===== FUNÇÃO PARA AUTENTICAÇÃO =====
-const API_URL = "https://se-register-api.en.tripleten-services.com/v1";
-
-export const getUserAuth = (token) => {
-  return fetch(`${API_URL}/users/me`, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "Content-Security-Policy": "default-src 'self' *.tripleten-service.com",
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((res) => {
-    return res.ok ? res.json() : Promise.reject(`Error: ${res.status}`);
-  });
-};
+// Função getUserAuth removida - agora está em auth.js
 
 // ===== INSTÂNCIA DA API =====
 const api = new Api({
