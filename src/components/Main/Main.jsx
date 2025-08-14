@@ -1,6 +1,7 @@
 import avatar from "../../images/jacques_cousteau.png";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Popup from "../Popup/Popup";
+import ImagePopup from "../Popup/ImagePopup";
 import NewCard from "../Popup/NewCard";
 import EditProfile from "../Popup/EditProfile";
 import EditAvatar from "../Popup/EditAvatar";
@@ -18,6 +19,15 @@ export default function Main(props) {
   } = props;
 
   const { currentUser } = useContext(CurrentUserContext);
+  const [imagePopupCard, setImagePopupCard] = useState(null);
+
+  const handleOpenImagePopup = (card) => {
+    setImagePopupCard(card);
+  };
+
+  const handleCloseImagePopup = () => {
+    setImagePopupCard(null);
+  };
 
   const newCardPopup = { title: "New card", children: <NewCard /> };
   const editProfilePopup = { title: "Edit Profile", children: <EditProfile /> };
@@ -61,7 +71,7 @@ export default function Main(props) {
           <Card
             key={card._id}
             card={card}
-            handleOpenPopup={handleOpenPopup}
+            handleOpenImagePopup={handleOpenImagePopup}
             handleCardLike={handleCardLike}
             handleCardDelete={handleCardDelete}
           />
@@ -72,6 +82,10 @@ export default function Main(props) {
         <Popup onClose={handleClosePopup} title={popup.title}>
           {popup.children}
         </Popup>
+      )}
+
+      {imagePopupCard && (
+        <ImagePopup card={imagePopupCard} onClose={handleCloseImagePopup} />
       )}
     </main>
   );

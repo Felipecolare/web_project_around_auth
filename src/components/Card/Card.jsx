@@ -4,7 +4,7 @@ import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
 export default function Card(props) {
   const { name, link, likes = [] } = props.card;
-  const { handleOpenPopup, handleCardLike, handleCardDelete } = props;
+  const { handleOpenImagePopup, handleCardLike, handleCardDelete } = props;
   const { currentUser } = useContext(CurrentUserContext);
 
   // Verificar se o usuário atual curtiu o cartão
@@ -13,8 +13,6 @@ export default function Card(props) {
   const cardLikeButtonClassName = `grid__button-heart ${
     isLiked ? "grid__button-heart-active" : ""
   }`;
-
-  const imagePopup = { children: <ImagePopup card={props.card} /> };
 
   return (
     <div className="grid__card">
@@ -26,7 +24,7 @@ export default function Card(props) {
         src={link}
         alt=""
         className="grid__card-image"
-        onClick={() => handleOpenPopup(imagePopup)}
+        onClick={() => handleOpenImagePopup(props.card)}
       />
       <div className="grid__card-text">
         <h3 className="grid__card-title">{name}</h3>
