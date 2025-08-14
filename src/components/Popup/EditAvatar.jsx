@@ -1,78 +1,42 @@
-// ===== src/components/Popup/EditAvatar.jsx =====
-import { useRef, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useState, useContext } from "react";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
-export default function EditAvatar({ onClose, onSubmit, isLoading: externalLoading }) {
-  const { currentUser } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const avatarRef = useRef();
+export default function EditAvatar() {
+  const { handleUpdateAvatar } = useContext(CurrentUserContext);
 
-  // Log para debug
-  console.log('🔍 EditAvatar renderizado:', { onClose, externalLoading, currentUser });
+  const [avatar, setAvatar] = useState("");
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    
-    const avatarUrl = avatarRef.current.value.trim();
-    
-    // Validação básica
-    if (!avatarUrl) {
-      alert('Por favor, insira o link da imagem.');
-      return;
-    }
+  const handleAvatarChange = (event) => {
+    setAvatar(event.target.value);
+  };
 
-    // Validação de URL básica
-    try {
-      new URL(avatarUrl);
-    } catch {
-      alert('Por favor, insira uma URL válida para a imagem.');
-      return;
-    }
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-    console.log('📝 Enviando novo avatar:', avatarUrl);
-
-    setIsLoading(true);
-    try {
-      // Chamar a função onSubmit passada como prop
-      await onSubmit({ avatar: avatarUrl });
-      console.log('✅ Avatar atualizado com sucesso');
-    } catch (error) {
-      console.error('❌ Erro ao atualizar avatar:', error);
-      alert('Erro ao atualizar avatar. Verifique a URL da imagem e tente novamente.');
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  const finalLoading = isLoading || externalLoading;
+    handleUpdateAvatar({ avatar });
+  };
 
   return (
     <form
-      className="popup__form"
-      name="avatar-form"
-      id="edit-avatar-form"
+      className="popup__input input-avatar"
+      noValidate
       onSubmit={handleSubmit}
     >
-      <label className="popup__field">
+      <div className="input__wrap">
         <input
-          className="popup__input popup__input_type_avatar"
-          id="avatar-link"
+          className="input__text input__text-avatar"
+          id="avatar"
           name="avatar"
-          placeholder="Link da imagem"
-          required
           type="url"
-          ref={avatarRef}
-          disabled={finalLoading}
+          placeholder="Link do avatar"
+          required
+          value={avatar}
+          onChange={handleAvatarChange}
         />
-        <span className="popup__error" id="avatar-link-error"></span>
-      </label>
-
-      <button 
-        className={`button popup__button ${finalLoading ? 'popup__button_disabled' : ''}`} 
-        type="submit"
-        disabled={finalLoading}
-      >
-        {finalLoading ? 'Salvando...' : 'Salvar'}
+        <p className="input__errorMessage"></p>
+      </div>
+      <button type="submit" className="input__submit input__submit-save">
+        Salvar
       </button>
     </form>
   );

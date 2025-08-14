@@ -1,141 +1,77 @@
-// ===== src/components/Main/Main.jsx =====
-import { useAuth } from '../../contexts/AuthContext';
-import Card from '../Card/Card';
-import Popup from '../Popup/Popup';
-import NewCard from '../Popup/NewCard';
-import EditProfile from '../Popup/EditProfile';
-import EditAvatar from '../Popup/EditAvatar';
-import ImagePopup from '../Popup/ImagePopup';
+import avatar from "../../images/jacques_cousteau.png";
+import { useContext } from "react";
+import Popup from "../Popup/Popup";
+import NewCard from "../Popup/NewCard";
+import EditProfile from "../Popup/EditProfile";
+import EditAvatar from "../Popup/EditAvatar";
+import Card from "../Card/Card";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext.js";
 
-export default function Main({
-  cards,
-  onCardLike,
-  onCardDelete,
-  onCardClick,
-  onOpenPopup,
-  onClosePopup,
-  popup,
-  selectedCard,
-  isLoading,
-  onAddPlaceSubmit,
-  onUpdateUser,
-  onUpdateAvatar,
-}) {
-  const { currentUser } = useAuth();
+export default function Main(props) {
+  const {
+    handleOpenPopup,
+    handleClosePopup,
+    popup,
+    handleCardLike,
+    handleCardDelete,
+    cards,
+  } = props;
+
+  const { currentUser } = useContext(CurrentUserContext);
+
+  const newCardPopup = { title: "New card", children: <NewCard /> };
+  const editProfilePopup = { title: "Edit Profile", children: <EditProfile /> };
+  const editAvatarPopup = { title: "Edit Avatar", children: <EditAvatar /> };
 
   return (
-    <main className="main">
-      <section className="profile page__container">
-        <div className="profile__info">
-          <div className="profile__avatar-container">
-            <img
-              className="profile__avatar"
-              src={currentUser?.avatar || "/src/images/jacques_cousteau.png"}
-              alt="Avatar do usuário"
-            />
-            <button
-              className="profile__avatar-edit"
-              onClick={() => onOpenPopup('edit-avatar')}
-              type="button"
-              aria-label="Editar avatar"
-            >
-              <img
-                className="profile__avatar-edit-icon"
-                src="/src/images/edit_button.png"
-                alt="Ícone de edição"
-              />
-            </button>
-          </div>
-          <div className="profile__text">
-            <h1 className="profile__name">
-              {currentUser?.name || "Jacques Cousteau"}
-            </h1>
-            <p className="profile__about">
-              {currentUser?.about || "Explorador"}
-            </p>
-            <button
-              className="profile__edit-button"
-              onClick={() => onOpenPopup('edit-profile')}
-              type="button"
-              aria-label="Editar perfil"
-            >
-              <img
-                className="profile__edit-icon"
-                src="/src/images/edit_button.png"
-                alt="Ícone de edição"
-              />
-            </button>
-          </div>
-        </div>
-        <button
-          className="profile__add-button"
-          onClick={() => onOpenPopup('new-card')}
-          type="button"
-          aria-label="Adicionar cartão"
-        >
+    <main className="page__container">
+      <section className="profile">
+        <div className="profile__card-image">
           <img
-            className="profile__add-icon"
-            src="/src/images/add_button.png"
-            alt="Ícone de adição"
+            src={currentUser.avatar || avatar}
+            alt={currentUser.name || "Jacques Cousteau"}
+            className="profile__image"
           />
-        </button>
-      </section>
-
-      <section className="cards page__container">
-        <ul className="cards__list">
-          {cards.map((card) => (
-            <Card
-              key={card._id}
-              card={card}
-              onCardLike={onCardLike}
-              onCardDelete={onCardDelete}
-              onCardClick={onCardClick}
-              currentUser={currentUser}
-            />
-          ))}
-        </ul>
-      </section>
-
-      {/* Popups */}
-      {popup === 'new-card' && (
-        <Popup onClose={onClosePopup}>
-          <NewCard
-            onClose={onClosePopup}
-            onSubmit={onAddPlaceSubmit}
-            isLoading={isLoading}
-          />
-        </Popup>
-      )}
-
-      {popup === 'edit-profile' && (
-        <Popup onClose={onClosePopup}>
-          <EditProfile
-            onClose={onClosePopup}
-            currentUser={currentUser}
-            isLoading={isLoading}
-            onUpdateUser={onUpdateUser}
-          />
-        </Popup>
-      )}
-
-      {popup === 'edit-avatar' && (
-        <div>
-          {console.log('🔍 Renderizando popup edit-avatar, popup:', popup)}
-          {console.log('🔍 onClosePopup:', onClosePopup)}
-          {console.log('🔍 currentUser:', currentUser)}
-          <Popup onClose={onClosePopup} className="popup__content_avatar">
-            <EditAvatar
-              onClose={onClosePopup}
-              currentUser={currentUser}
-              isLoading={isLoading}
-              onSubmit={onUpdateAvatar}
-            />
-          </Popup>
+          <button
+            className="profile__btn-avatar"
+            onClick={() => handleOpenPopup(editAvatarPopup)}
+          ></button>
         </div>
-      )}
+        <div className="profile__card">
+          <h2 className="profile__title">
+            {currentUser.name || "Jacques Cousteau"}
+          </h2>
+          <button
+            className="profile__button-edit"
+            onClick={() => handleOpenPopup(editProfilePopup)}
+          ></button>
+          <p className="profile__subtitle">
+            {currentUser.about || "Explorador"}
+          </p>
+        </div>
 
-      {selectedCard && (
-        <ImagePopup card={selectedCard} onClose={onClosePopup} />
+        <button
+          className="profile__button-add"
+          onClick={() => handleOpenPopup(newCardPopup)}
+        ></button>
+      </section>
+
+      <section className="grid">
+        {cards.map((card) => (
+          <Card
+            key={card._id}
+            card={card}
+            handleOpenPopup={handleOpenPopup}
+            handleCardLike={handleCardLike}
+            handleCardDelete={handleCardDelete}
+          />
+        ))}
+      </section>
+
+      {popup && (
+        <Popup onClose={handleClosePopup} title={popup.title}>
+          {popup.children}
+        </Popup>
       )}
     </main>
   );

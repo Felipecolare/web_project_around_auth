@@ -1,410 +1,199 @@
-/* ===== src/blocks/popup.css ===== */
-/* Popup */ 
-.popup { 
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-  background-color: rgba(0, 0, 0, 0.5); 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  transition: visibility 0.3s, opacity 0.3s linear; 
-  z-index: 10; 
-} 
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+}
 
-.popup_opened { 
-  visibility: visible; 
-  opacity: 1; 
-} 
+.popup_opened {
+  visibility: visible;
+  opacity: 1;
+}
 
-/* Garantir que popups de edição tenham fundo branco e tamanho adequado */
-.popup:not(.popup_type_image) .popup__content {
-  background-color: #fff !important;
-  min-width: 550px; /* Aumentado para 550px */
-  min-height: 400px; /* Aumentado para 400px */
-  border: 2px solid #f0f0f0; /* Borda mais sutil */
-  border-radius: 20px; /* Bordas mais arredondadas */
-  box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.15); /* Sombra mais elegante */
+.popup__container {
+  background: rgba(255, 255, 255, 1);
+  max-width: 430px;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 1);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 25px 0px rgba(0, 0, 0, 0.15);
+  animation: 1s drop;
+}
+
+@keyframes drop {
+  0% {
+    transform: translate(-50%, -150%);
+  }
+  100% {
+    transform: translate(-50%, -50%);
+  }
+}
+
+.popup__cardInfo {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centralizar verticalmente */
-  align-items: center; /* Centralizar horizontalmente */
-} 
-
-/* Estilos específicos para popup de edição de avatar */
-.popup__content:has(.popup__form[name="avatar-form"]) {
-  background-color: #fff !important;
-  min-width: 550px !important;
-  min-height: 400px !important;
-  border: 2px solid #f0f0f0 !important;
-  border-radius: 20px !important;
-  box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.15) !important;
-  z-index: 1000 !important;
+  align-items: center;
+  padding: 60px 36px;
 }
 
-/* Estilos específicos para popup de edição de avatar - alternativa sem :has() */
-.popup__content.popup__content_avatar {
-  background-color: #fff !important;
-  min-width: 550px !important;
-  min-height: 400px !important;
-  border: 2px solid #f0f0f0 !important;
-  border-radius: 20px !important;
-  box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.15) !important;
-  z-index: 1000 !important;
-  position: relative !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 40px 45px 45px !important;
+.popup__info {
+  color: #000;
+  text-align: center;
 }
 
-/* Forçar visibilidade do popup de avatar */
-.popup__content_avatar * {
-  background-color: transparent !important;
-}
-
-.popup__content_avatar .popup__form {
-  background-color: transparent !important;
-  width: 100% !important;
-  max-width: 400px !important;
-}
-
-/* Estilo final para popup de avatar */
-.popup__content_avatar {
-  background-color: #fff !important;
-  min-width: 550px !important;
-  min-height: 400px !important;
-  border: 2px solid #f0f0f0 !important;
-  border-radius: 20px !important;
-  box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.15) !important;
-  z-index: 1000 !important;
-  position: relative !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 40px 45px 45px !important;
-}
-
-.popup__content { 
-  position: relative; 
-  max-width: 430px; 
-  background-color: #fff !important; /* Forçar fundo branco */
-  border-radius: 10px; 
-  padding: 40px 45px 45px; /* Aumentado padding para mais espaço */
-  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15);
-  min-width: 358px;
-  min-height: 200px; /* Altura mínima para o popup de edição */
-} 
-
-/* Forçar fundo transparente para popup de imagem */
-.popup_type_image .popup__content {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
-  min-width: auto !important;
-  min-height: auto !important;
-}
-
-/* REMOVER TODA BORDA BRANCA DAS IMAGENS - CSS AGRESSIVO */
-.popup_type_image,
-.popup_type_image *,
-.popup_type_image .popup__content,
-.popup_type_image .popup__content *,
-.popup_type_image .popup__image-container,
-.popup_type_image .popup__image-container *,
-.popup_type_image .popup__image,
-.popup_type_image .popup__caption {
-  background-color: transparent !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-.popup__close { 
-  position: absolute; 
-  top: -40px; 
-  right: -40px; 
-  width: 32px; 
-  height: 32px; 
-  background: transparent; 
-  border: none; 
-  cursor: pointer; 
-  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28.9782 28.9782L3.02185 3.02185M3.02185 28.9782L28.9782 3.02185' stroke='white' stroke-width='3'/%3E%3C/svg%3E"); 
-  background-repeat: no-repeat; 
-  background-position: center; 
-  background-size: contain; 
-  transition: opacity 0.2s ease; 
-} 
-
-.popup__close:hover { 
-  opacity: 0.6; 
-} 
-
-.popup__title { 
-  font-size: 32px; /* Fonte ainda maior */
-  font-weight: 700; /* Peso da fonte ajustado */
-  line-height: 1.2; 
-  color: #2c3e50; /* Cor mais profissional */
-  margin: 0 0 60px; /* Mais espaço abaixo do título */
-  text-align: center; /* Centralizar o título */
-  width: 100%;
-  letter-spacing: -0.5px; /* Espaçamento entre letras */
-} 
-
-.popup__form { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 45px; /* Espaçamento maior entre campos */
-  align-items: center; /* Centralizar os campos */
-  width: 100%;
-  max-width: 400px; /* Largura máxima para melhor organização */
-} 
-
-.popup__field { 
-  position: relative; 
-  display: flex; 
-  flex-direction: column; 
-  width: 100%; 
-  align-items: center; /* Centralizar o conteúdo do campo */
-  text-align: center; /* Centralizar o texto */
-} 
-
-.popup__input { 
-  width: 100%; 
-  height: 40px; /* Altura maior para mais conforto */
-  border: none; 
-  border-bottom: 2px solid #e0e0e0; /* Borda mais sutil */
-  padding: 0 0 20px; /* Mais padding inferior */
-  font-size: 18px; /* Fonte maior */
-  line-height: 1.21; 
-  color: #333; 
-  outline: none;
+.popup__button-close {
   background: transparent;
-  text-align: center; /* Centralizar o texto digitado */
-  transition: all 0.3s ease; /* Transição suave */
-  font-weight: 500; /* Fonte um pouco mais pesada */
-} 
-
-.popup__input:focus { 
-  border-bottom-color: #4a90e2; /* Cor azul mais suave */
-  border-bottom-width: 3px; /* Borda mais grossa ao focar */
-  transform: scale(1.02); /* Efeito sutil de escala */
-} 
-
-.popup__input_type_error { 
-  border-bottom-color: #ff0000; 
-} 
-
-.popup__error { 
-  position: absolute; 
-  top: calc(100% + 5px); 
-  left: 0; 
-  font-size: 12px; 
-  line-height: 1.25; 
-  color: #ff0000; 
-  opacity: 0; 
-  transition: opacity 0.3s; 
-} 
-
-.popup__error_visible { 
-  opacity: 1; 
-} 
-
-.popup__button { 
-  margin-top: 40px; /* Mais espaço acima do botão */
-  min-height: 60px; /* Botão maior */
-  background: linear-gradient(135deg, #4a90e2, #357abd); /* Gradiente azul */
-  color: #fff; 
-  border: none; 
-  border-radius: 12px; /* Bordas mais arredondadas */
-  font-size: 18px; 
-  font-weight: 600; /* Fonte mais pesada */
-  line-height: 1.22; 
-  cursor: pointer; 
-  transition: all 0.3s ease; /* Transição suave */
-  width: 100%;
-  max-width: 220px; /* Largura máxima para o botão */
-  box-shadow: 0px 8px 25px rgba(74, 144, 226, 0.3); /* Sombra azul */
-} 
-
-.popup__button:hover { 
-  transform: translateY(-3px); /* Efeito de elevação maior */
-  box-shadow: 0px 12px 35px rgba(74, 144, 226, 0.4); /* Sombra mais intensa */
-  background: linear-gradient(135deg, #357abd, #4a90e2); /* Gradiente invertido */
-} 
-
-.popup__button_disabled { 
-  opacity: 0.2; 
-  cursor: not-allowed; 
-} 
-
-.popup__button_disabled:hover { 
-  opacity: 0.2; 
+  background-image: url("../images/close-icon.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  right: -34px;
+  top: -30px;
+  border: none;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
 }
 
-/* Estilos para o popup de imagem */
-.popup_type_image {
-  background-color: rgba(0, 0, 0, 0.9) !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.popup__button-close:hover {
+  background: transparent url("../images/close-clicked-icon.png") center
+    no-repeat;
+  cursor: pointer;
 }
 
-.popup_type_image .popup__content {
-  background: transparent !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
-  min-width: auto !important;
-  min-height: auto !important;
+.popup__title {
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 29.05px;
+  text-align: left;
+  margin: 34px 64px 54px 36px;
+  color: rgba(0, 0, 0, 1);
 }
 
-.popup__content_content_image {
-  background: transparent !important; /* Forçar fundo transparente */
-  box-shadow: none;
-  max-width: 95vw; /* Aumentado para 95vw para mais espaço */
-  max-height: 95vh; /* Aumentado para 95vh para mais espaço */
-  min-width: 800px; /* Aumentado significativamente para 800px */
-  min-height: 600px; /* Aumentado significativamente para 600px */
-  padding: 0;
-  border-radius: 0;
-  border: none !important; /* Remover qualquer borda */
-  position: relative;
+.popup__input {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
-/* Container para a imagem expandida no popup */
-.popup__image-container {
-  position: relative;
-  max-width: 100%;
-  max-height: 75vh;
-  min-width: 750px; /* Aumentado significativamente para 750px */
-  min-height: 550px; /* Aumentado significativamente para 550px */
+.input__wrap {
+  margin-bottom: 30px;
+}
+
+.input__text {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.94px;
+  text-align: left;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 1);
+  margin: 0 36px;
+  max-width: 358px;
+  width: 80%;
+}
+
+.input__text:focus {
+  outline: none;
+}
+
+.input__submit {
+  max-width: 358px;
+  margin: 18px 36px 36px;
+  border-radius: 2px 0px 0px 0px;
+  background: rgba(0, 0, 0, 1);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 21.78px;
+  text-align: center;
+  color: rgba(255, 255, 255, 1);
+  padding-top: 14px;
+  padding-bottom: 18px;
+  border: none;
+  cursor: pointer;
+}
+
+.input__submit:hover {
+  opacity: 80%;
+}
+
+.input__submit:disabled,
+.input__submit[disabled] {
+  background-color: transparent;
+  color: #000;
+  opacity: 20%;
+}
+
+.input__errorMessage {
+  display: none;
+  font-size: 12px;
+  color: rgba(255, 0, 0, 1);
+  margin: 0 36px 5px;
+  max-width: 358px;
+  width: 80%;
+}
+
+.input__errorMessage-show {
+  display: block;
+}
+
+.invalid-input {
+  border-bottom: 1px solid rgba(255, 0, 0, 1);
+}
+
+.formButton_disabled {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Image popup styles */
+.popup__container_image {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: transform 0.2s ease;
-  background: transparent !important; /* Forçar fundo transparente */
-  border: none !important; /* Remover qualquer borda */
-}
-
-.popup__image-container:hover {
-  transform: scale(1.01);
+  background-color: transparent;
+  border: none;
+  box-shadow: unset;
+  max-width: 75vw;
+  max-height: 75vh;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .popup__image {
   max-width: 100%;
-  max-height: 75vh;
-  min-width: 750px; /* Aumentado significativamente para 750px */
-  min-height: 550px; /* Aumentado significativamente para 550px */
+  max-height: calc(75vh - 40px);
   object-fit: contain;
   display: block;
-  width: auto;
-  height: auto;
-  background: transparent !important; /* Forçar fundo transparente */
-  border: none !important; /* Remover qualquer borda */
 }
 
-.popup__caption {
-  background-color: transparent;
-  color: #ffffff;
+.popup__image-title {
   font-size: 12px;
   font-weight: 400;
-  line-height: 1.25;
-  margin: 10px 0 0;
-  padding: 0;
-  text-align: center;
+  line-height: 14.52px;
+  text-align: left;
+  color: #ffffff;
+  margin: 10px 0 0 0;
 }
 
-/* Posicionamento específico do botão X para popup de imagem */
-.popup_type_image .popup__close {
-  position: absolute;
-  top: -40px;
-  right: -40px;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28.9782 28.9782L3.02185 3.02185M3.02185 28.9782L28.9782 3.02185' stroke='white' stroke-width='3'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  transition: opacity 0.2s ease;
-  z-index: 1001;
-}
+@media screen and (max-width: 720px) {
+  .popup__container {
+    max-width: 282px;
+  }
 
-/* SOBRESCREVER COMPLETAMENTE - SEM BORDA BRANCA */
-.popup_type_image .popup__content {
-  background: transparent !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
-  min-width: auto !important;
-  min-height: auto !important;
-  max-width: none !important;
-  max-height: none !important;
-}
-
-.popup_type_image .popup__image-container {
-  background: transparent !important;
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.popup_type_image .popup__image {
-  background: transparent !important;
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-/* MANTER BOTÃO X VISÍVEL E FUNCIONAL */
-.popup_type_image .popup__close {
-  background: white !important;
-  background-color: white !important;
-  border: 2px solid #333 !important;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3) !important;
-  z-index: 1001 !important;
-  position: absolute !important;
-  top: -40px !important;
-  right: -40px !important;
-  width: 32px !important;
-  height: 32px !important;
-  cursor: pointer !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* X usando CSS puro - mais visível */
-.popup_type_image .popup__close::before,
-.popup_type_image .popup__close::after {
-  content: '' !important;
-  position: absolute !important;
-  width: 20px !important;
-  height: 3px !important;
-  background-color: #000 !important;
-  border-radius: 2px !important;
-}
-
-.popup_type_image .popup__close::before {
-  transform: rotate(45deg) !important;
-}
-
-.popup_type_image .popup__close::after {
-  transform: rotate(-45deg) !important;
+  .popup__button-close {
+    right: -30px;
+    top: -30px;
+  }
 }

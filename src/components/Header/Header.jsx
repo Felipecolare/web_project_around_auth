@@ -1,65 +1,61 @@
-// ===== src/components/Header/Header.jsx - COM AUTENTICAÇÃO =====
-import { useAuth } from '../../contexts/AuthContext';
-import { Link, useLocation } from 'react-router-dom';
+import logo from "../../images/logo_around.png";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { removeToken } from "../../utils/token";
+import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 
-export default function Header() {
-  const { isAuthenticated, currentUser, logout } = useAuth();
-  const location = useLocation();
+export default function Header({ text }) {
+  const { currentUser, isLoggedIn, setIsLoggedIn } =
+    useContext(CurrentUserContext);
+  const navigate = useNavigate();
 
-  // Determinar o conteúdo do header baseado na rota atual
-  const getHeaderContent = () => {
-    if (location.pathname === '/signin') {
-      return (
-        <Link to="/signup" className="header__link">
-          Inscrever-se
-        </Link>
-      );
-    }
-    
-    if (location.pathname === '/signup') {
-      return (
-        <Link to="/signin" className="header__link">
-          Entrar
-        </Link>
-      );
-    }
-    
-    // Se estiver logado e na rota principal
-    if (isAuthenticated) {
-      return (
-        <div className="header__user-info">
-          <span className="header__email">
-            {currentUser?.email || 'usuário@email.com'}
-          </span>
-          <button 
-            className="header__logout"
-            onClick={logout}
-            type="button"
-          >
-            Sair
-          </button>
-        </div>
-      );
-    }
-    
-    return null;
+  const handleLogOut = () => {
+    removeToken();
+    navigate("/signin");
+    setIsLoggedIn(false);
+  };
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const handleToggleMenu = () => {
+    setIsMenuOpen((preview) => !preview);
   };
 
   return (
-    <header className="header page__container">
-      <nav className="nav">
-        {/* Indicador de status quando logado */}
-        {isAuthenticated && (
-          <div className="nav__status">LOGGED</div>
-        )}
-        
-        <div className="nav__logo">
-          <span className="nav__logo-main">Around</span>
-          <span className="nav__logo-sub">The U.S.</span>
+    <>
+      {isMenuOpen && (
+        <div className="header__mobile-logout">
+          <p className="header__email">{currentUser.email}</p>
+          <button className="header__button-logout" onClick={handleLogOut}>
+            Sair
+          </button>
         </div>
-        
-        {getHeaderContent()}
-      </nav>
-    </header>
+      )}
+      <header className="header page__container">
+        <img src={logo} alt="Logo Around The U.S." className="header__image" />
+        {isLoggedIn ? (
+          <>
+            <button
+              className={
+                isMenuOpen ? "header__close-menu" : "header__open-menu"
+              }
+              onClick={() => handleToggleMenu()}
+            ></button>
+            <div className="header__logout">
+              <p className="header__email">{currentUser.email}</p>
+              <button className="header__button-logout" onClick={handleLogOut}>
+                Sair
+              </button>{" "}
+            </div>
+          </>
+        ) : (
+          <a
+            className="header__link"
+            href={text === "Entrar" ? "/signin" : "/signup"}
+          >
+            {text}
+          </a>
+        )}
+      </header>
+    </>
   );
 }

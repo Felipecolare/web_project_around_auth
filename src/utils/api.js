@@ -333,12 +333,28 @@ class Api {
   }
 }
 
+// ===== FUNÇÃO PARA AUTENTICAÇÃO =====
+const API_URL = "https://se-register-api.en.tripleten-services.com/v1";
+
+export const getUserAuth = (token) => {
+  return fetch(`${API_URL}/users/me`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Content-Security-Policy": "default-src 'self' *.tripleten-service.com",
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => {
+    return res.ok ? res.json() : Promise.reject(`Error: ${res.status}`);
+  });
+};
+
 // ===== INSTÂNCIA DA API =====
-// Criando uma instância da API com os parâmetros necessários
-// UNIFICADO: Usando a mesma URL da API de autenticação para compatibilidade
 const api = new Api({
-  baseUrl: "https://se-register-api.en.tripleten-services.com/v1",
+  baseUrl: "https://around-api.pt-br.tripleten-services.com/v1",
   headers: {
+    authorization: "18003886-b213-4054-97f5-79797a7a7bca",
     "Content-Type": "application/json",
   },
 });
