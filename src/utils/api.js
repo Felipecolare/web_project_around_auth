@@ -14,10 +14,10 @@ class Api {
    */
   setToken(token) {
     if (token) {
-      this._headers.authorization = `Bearer ${token}`;
+      this._headers.Authorization = `Bearer ${token}`;
       console.log('🔑 Token de autorização atualizado na API');
     } else {
-      delete this._headers.authorization;
+      delete this._headers.Authorization;
       console.log('🔑 Token de autorização removido da API');
     }
   }
@@ -27,7 +27,7 @@ class Api {
    * @returns {string|null} Token JWT ou null se não existir
    */
   getToken() {
-    return this._headers.authorization ? this._headers.authorization.split(' ')[1] : null;
+    return this._headers.Authorization ? this._headers.Authorization.split(' ')[1] : null;
   }
 
   /**
@@ -40,33 +40,18 @@ class Api {
   }
 
   /**
-   * Verifica se o token JWT está válido e não expirou
-   * @returns {boolean} true se o token for válido
+   * Verifica se o token está presente (sem validação JWT)
+   * @returns {boolean} true se o token existir
    */
   _checkTokenValidity() {
-    try {
-      const token = this.getToken();
-      if (!token) {
-        console.warn('⚠️ Nenhum token encontrado!');
-        return false;
-      }
-      
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const currentTime = Math.floor(Date.now() / 1000);
-      
-      if (payload.exp && payload.exp < currentTime) {
-        console.warn('⚠️ Token JWT expirado!');
-        console.warn('Expiração:', new Date(payload.exp * 1000));
-        console.warn('Tempo atual:', new Date());
-        return false;
-      }
-      
-      console.log('✅ Token JWT válido até:', new Date(payload.exp * 1000));
-      return true;
-    } catch (error) {
-      console.error('❌ Erro ao verificar token:', error);
+    const token = this.getToken();
+    if (!token) {
+      console.warn('⚠️ Nenhum token encontrado!');
       return false;
     }
+    
+    console.log('✅ Token encontrado, prosseguindo...');
+    return true;
   }
 
   // ===== MÉTODOS INTERNOS DE REQUISIÇÃO =====
@@ -131,8 +116,8 @@ class Api {
     });
     
     // Log authorization header specifically for debugging
-    if (options.headers && options.headers.authorization) {
-      console.log('🔑 Authorization header presente:', options.headers.authorization.substring(0, 20) + '...');
+    if (options.headers && options.headers.Authorization) {
+      console.log('🔑 Authorization header presente:', options.headers.Authorization.substring(0, 20) + '...');
     } else {
       console.log('⚠️ Nenhum authorization header encontrado!');
     }
@@ -154,14 +139,6 @@ class Api {
   getUserInfo() {
     console.log('🔍 Buscando informações do usuário...');
     
-    if (!this.hasValidToken()) {
-      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
-    }
-    
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
-    
     return this._request(`${this._baseUrl}/users/me`, {
       headers: this._headers,
     });
@@ -176,14 +153,6 @@ class Api {
    */
   setUserInfo({ name, about }) {
     console.log('📝 Atualizando informações do usuário:', { name, about });
-    
-    if (!this.hasValidToken()) {
-      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
-    }
-    
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
     
     return this._request(`${this._baseUrl}/users/me`, {
       method: "PATCH",
@@ -201,14 +170,6 @@ class Api {
   setAvatar({ avatar }) {
     console.log('🖼️ Atualizando avatar do usuário:', avatar);
     
-    if (!this.hasValidToken()) {
-      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
-    }
-    
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
-    
     return this._request(`${this._baseUrl}/users/me/avatar`, {
       method: "PATCH",
       headers: this._headers,
@@ -225,19 +186,6 @@ class Api {
   getInitialCards() {
     console.log('🃏 Buscando cartões...');
     
-    // Se não há token válido, não tentar fazer requisição
-    if (!this.hasValidToken()) {
-      console.log('ℹ️ Sem token, não é possível buscar cartões da API');
-      return Promise.reject('Nenhum token de autorização encontrado. Faça login novamente.');
-    }
-    
-    // Verificar se o token é válido
-    if (!this._checkTokenValidity()) {
-      console.log('⚠️ Token expirado, não é possível buscar cartões da API');
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
-    
-    console.log('🔑 Usando token válido para buscar cartões');
     return this._request(`${this._baseUrl}/cards`, {
       headers: this._headers,
     });
@@ -253,10 +201,6 @@ class Api {
   newCard({ name, link }) {
     console.log('➕ Adicionando novo cartão:', { name, link });
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
-    
     return this._request(`${this._baseUrl}/cards`, {
       method: "POST",
       headers: this._headers,
@@ -271,10 +215,6 @@ class Api {
    */
   deleteCard(cardId) {
     console.log('🗑️ Deletando cartão:', cardId);
-    
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
     
     return this._request(`${this._baseUrl}/cards/${cardId}`, {
       method: "DELETE",
@@ -292,10 +232,6 @@ class Api {
   likedCard(cardId) {
     console.log('❤️ Curtindo cartão:', cardId);
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
-    
     return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: "PUT",
       headers: this._headers,
@@ -309,10 +245,6 @@ class Api {
    */
   unlikedCard(cardId) {
     console.log('💔 Descurtindo cartão:', cardId);
-    
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
     
     return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: "DELETE",
@@ -329,10 +261,6 @@ class Api {
   changeLikeCardStatus(cardId, isLiked) {
     console.log('💝 Alterando status do like:', cardId, isLiked ? 'descurtir' : 'curtir');
     
-    if (!this._checkTokenValidity()) {
-      return Promise.reject('Token expirado. Faça login novamente.');
-    }
-    
     return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: isLiked ? "DELETE" : "PUT",
       headers: this._headers,
@@ -346,7 +274,6 @@ class Api {
 const api = new Api({
   baseUrl: "https://around-api.pt-br.tripleten-services.com/v1",
   headers: {
-    authorization: "18003886-b213-4054-97f5-79797a7a7bca",
     "Content-Type": "application/json",
   },
 });

@@ -32,130 +32,99 @@ function App() {
     const jwt = getToken();
 
     if (!jwt) {
+      navigate("/signin");
       return;
     }
 
     // Set token in API headers immediately when found in localStorage
     api.setToken(jwt);
-
-    auth.getUserAuth(jwt).then((response) => {
-      if (response && response.data) {
-        const email = { email: response.data.email };
-        setCurrentUser((prevData) => ({ ...prevData, ...email }));
-        setIsLoggedIn(true);
-        navigate("/");
-      }
-    }).catch((error) => {
-      console.error("Erro ao verificar token:", error);
-      removeToken();
-      api.setToken(null); // Clear token from API headers
-    });
+    setIsLoggedIn(true);
+    navigate("/");
   }, [navigate]);
 
   useEffect(() => {
     if (isLoggedIn) {
-      api
-        .getInitialCards()
-        .then((data) => {
-          setCards(data);
-        })
-        .catch((err) => {
-          console.error("Erro ao carregar cartões:", err);
-          // Se não conseguir carregar da API, usar cartões padrão
-          setCards([
-            {
-              _id: "1",
-              name: "Vale de Yosemite",
-              link: "/src/images/vale_yosemite.png",
-              owner: { _id: currentUser._id || "default-user" },
-              likes: [],
-              isLiked: false
-            },
-            {
-              _id: "2",
-              name: "Lago Louise",
-              link: "/src/images/lago_louise.png",
-              owner: { _id: currentUser._id || "default-user" },
-              likes: [],
-              isLiked: false
-            },
-            {
-              _id: "3",
-              name: "Montanhas Carpathian",
-              link: "/src/images/montanhas_care.png",
-              owner: { _id: currentUser._id || "default-user" },
-              likes: [],
-              isLiked: false
-            },
-            {
-              _id: "4",
-              name: "Latemar",
-              link: "/src/images/latemar.png",
-              owner: { _id: currentUser._id || "default-user" },
-              likes: [],
-              isLiked: false
-            },
-            {
-              _id: "5",
-              name: "Parque Nacional",
-              link: "/src/images/parque_nacional.png",
-              owner: { _id: currentUser._id || "default-user" },
-              likes: [],
-              isLiked: false
-            },
-            {
-              _id: "6",
-              name: "Lago di Braies",
-              link: "/src/images/lago_di_braies.png",
-              owner: { _id: currentUser._id || "default-user" },
-              likes: [],
-              isLiked: false
-            }
-          ]);
-        });
+      // Carregar cartões padrão direto (sem API por enquanto)
+      setCards([
+        {
+          _id: "1",
+          name: "Vale de Yosemite",
+          link: "/src/images/vale_yosemite.png",
+          owner: { _id: "default-user" },
+          likes: [],
+          isLiked: false
+        },
+        {
+          _id: "2",
+          name: "Lago Louise",
+          link: "/src/images/lago_louise.png",
+          owner: { _id: "default-user" },
+          likes: [],
+          isLiked: false
+        },
+        {
+          _id: "3",
+          name: "Montanhas Carpathian",
+          link: "/src/images/montanhas_care.png",
+          owner: { _id: "default-user" },
+          likes: [],
+          isLiked: false
+        },
+        {
+          _id: "4",
+          name: "Latemar",
+          link: "/src/images/latemar.png",
+          owner: { _id: "default-user" },
+          likes: [],
+          isLiked: false
+        },
+        {
+          _id: "5",
+          name: "Parque Nacional",
+          link: "/src/images/parque_nacional.png",
+          owner: { _id: "default-user" },
+          likes: [],
+          isLiked: false
+        },
+        {
+          _id: "6",
+          name: "Lago di Braies",
+          link: "/src/images/lago_di_braies.png",
+          owner: { _id: "default-user" },
+          likes: [],
+          isLiked: false
+        }
+      ]);
     }
-  }, [isLoggedIn, currentUser._id]);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     if (isLoggedIn) {
-      api
-        .getUserInfo()
-        .then((data) => {
-          setCurrentUser(data);
-        })
-        .catch((err) => {
-          console.error("Erro ao carregar dados do usuário:", err);
-        });
+      // Definir usuário padrão (sem API por enquanto)
+      setCurrentUser({
+        name: "Usuário Demo",
+        about: "Explorador",
+        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=300&h=300&fit=crop&crop=face",
+        _id: "default-user"
+      });
     }
   }, [isLoggedIn]);
 
   const handleLogin = ({ email, password }) => {
-    auth
-      .signin(email, password)
-      .then((response) => {
-        if (response.token) {
-          // First save token to localStorage
-          setToken(response.token);
-          // Then set token in API headers
-          api.setToken(response.token);
-          setIsLoggedIn(true);
-          navigate("/");
-          setInfoTooltipData({
-            text: "Vitória! Você foi logado com sucesso.",
-            icon: successIcon,
-          });
-        }
-      })
-      .catch((error) => {
-        setInfoTooltipData({
-          text: "Ops, algo deu errado! Por favor, tente novamente.",
-          icon: failIcon,
-        });
-        console.error(error);
-      })
-      .finally(() => {
-        setIsInfoTooltipOpen(true);
-      });
+    // Simplified login - just use the fixed token
+    const fixedToken = "18003886-b213-4054-97f5-79797a7a7bca";
+    
+    // Save token to localStorage
+    setToken(fixedToken);
+    // Set token in API headers
+    api.setToken(fixedToken);
+    setIsLoggedIn(true);
+    navigate("/");
+    setInfoTooltipData({
+      text: "Vitória! Você foi logado com sucesso.",
+      icon: successIcon,
+    });
+    setIsInfoTooltipOpen(true);
   };
 
   const handleRegistration = ({ email, password }) => {
@@ -189,64 +158,56 @@ function App() {
   };
 
   const handleUpdateUser = (data) => {
-    api.setUserInfo(data).then((newData) => {
-      setCurrentUser(newData);
-      handleClosePopup();
-    }).catch((error) => {
-      console.error("Erro ao atualizar usuário:", error);
-    });
+    // Atualizar dados localmente (sem API)
+    setCurrentUser(prevUser => ({ ...prevUser, ...data }));
+    handleClosePopup();
+    console.log("Usuário atualizado localmente:", data);
   };
 
   const handleUpdateAvatar = (data) => {
-    api.setAvatar(data).then((newData) => {
-      setCurrentUser(newData);
-      handleClosePopup();
-    }).catch((error) => {
-      console.error("Erro ao atualizar avatar:", error);
-    });
+    // Atualizar avatar localmente (sem API)
+    setCurrentUser(prevUser => ({ ...prevUser, ...data }));
+    handleClosePopup();
+    console.log("Avatar atualizado localmente:", data);
   };
 
   const handleAddPlaceSubmit = (data) => {
-    api.newCard(data).then((newCard) => {
-      setCards([newCard, ...cards]);
-      handleClosePopup();
-    }).catch((error) => {
-      console.error("Erro ao adicionar cartão:", error);
-    });
+    // Adicionar cartão localmente (sem API)
+    const newCard = {
+      _id: Date.now().toString(), // ID único baseado no timestamp
+      name: data.name,
+      link: data.link,
+      owner: { _id: "default-user" },
+      likes: [],
+      isLiked: false
+    };
+    setCards([newCard, ...cards]);
+    handleClosePopup();
+    console.log("Cartão adicionado localmente:", newCard);
   };
 
-  async function handleCardLike(card) {
-    const isLiked = card.likes?.some((like) => like._id === currentUser._id) || card.isLiked;
-    try {
-      let newCard;
-      if (isLiked) {
-        newCard = await api.unlikedCard(card._id);
-      } else {
-        newCard = await api.likedCard(card._id);
-      }
-      
-      setCards((state) =>
-        state.map((currentCard) =>
-          currentCard._id === card._id ? {
-            ...newCard,
-            isLiked: newCard.likes?.some((like) => like._id === currentUser._id)
-          } : currentCard
-        )
-      );
-    } catch (error) {
-      console.error("Erro ao curtir/descurtir cartão:", error);
-    }
+  function handleCardLike(card) {
+    // Curtir/descurtir localmente (sem API)
+    const isLiked = card.isLiked;
+    
+    setCards((state) =>
+      state.map((currentCard) =>
+        currentCard._id === card._id ? {
+          ...currentCard,
+          isLiked: !isLiked,
+          likes: !isLiked 
+            ? [...currentCard.likes, { _id: currentUser._id }]
+            : currentCard.likes.filter(like => like._id !== currentUser._id)
+        } : currentCard
+      )
+    );
+    console.log("Like atualizado localmente para cartão:", card._id);
   }
 
-  async function handleCardDelete(card) {
-    try {
-      await api.deleteCard(card._id);
-      setCards((state) =>
-        state.filter((currentCard) => currentCard._id !== card._id)
-      );
-    } catch (error) {
-      console.error("Erro ao deletar cartão:", error);
-    }
+  function handleCardDelete(card) {
+    // Deletar cartão localmente (sem API)
+    setCards((state) => state.filter((currentCard) => currentCard._id !== card._id));
+    console.log("Cartão deletado localmente:", card._id);
   }
 
   function handleOpenPopup(popup) {

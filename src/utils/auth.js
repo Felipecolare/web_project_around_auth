@@ -1,4 +1,4 @@
-export const BASE_URL = "https://se-register-api.en.tripleten-services.com/v1";
+export const BASE_URL = "https://around-api.pt-br.tripleten-services.com/v1";
 
 export const signin = (email, password) => {
   return fetch(`${BASE_URL}/signin`, {
@@ -6,7 +6,7 @@ export const signin = (email, password) => {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Content-Security-Policy": "default-src 'self' *.tripleten-service.com",
+      Authorization: "Bearer 18003886-b213-4054-97f5-79797a7a7bca",
     },
     body: JSON.stringify({ email, password }),
   }).then((res) => {
@@ -20,7 +20,7 @@ export const signup = (email, password) => {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Content-Security-Policy": "default-src 'self' *.tripleten-service.com",
+      Authorization: "Bearer 18003886-b213-4054-97f5-79797a7a7bca",
     },
     body: JSON.stringify({ email, password }),
   }).then((res) => {
@@ -34,8 +34,7 @@ export const getUserAuth = (token) => {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Content-Security-Policy": "default-src 'self' *.tripleten-service.com",
-      Authorization: `Bearer ${token}`,
+      Authorization: "Bearer 18003886-b213-4054-97f5-79797a7a7bca",
     },
   }).then((res) => {
     return res.ok ? res.json() : Promise.reject(`Error: ${res.status}`);
