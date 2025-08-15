@@ -102,9 +102,9 @@ function App() {
     if (isLoggedIn) {
       // Definir usuário padrão (sem API por enquanto)
       setCurrentUser({
-        name: "Usuário Demo",
+        name: "Jacques Cousteau",
         about: "Explorador",
-        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=300&h=300&fit=crop&crop=face",
+        avatar: "/src/images/jacques_cousteau.png",
         _id: "default-user"
       });
     }
