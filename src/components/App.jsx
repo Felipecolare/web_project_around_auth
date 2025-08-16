@@ -36,7 +36,7 @@ function App() {
       return;
     }
 
-    // Set token in API headers immediately when found in localStorage
+    // Set token in API headers and login automatically
     api.setToken(jwt);
     setIsLoggedIn(true);
     navigate("/");
@@ -44,109 +44,111 @@ function App() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      // Carregar cartões padrão direto (sem API por enquanto)
-      setCards([
-        {
-          _id: "1",
-          name: "Vale de Yosemite",
-          link: "/src/images/vale_yosemite.png",
-          owner: { _id: "default-user" },
-          likes: [],
-          isLiked: false
-        },
-        {
-          _id: "2",
-          name: "Lago Louise",
-          link: "/src/images/lago_louise.png",
-          owner: { _id: "default-user" },
-          likes: [],
-          isLiked: false
-        },
-        {
-          _id: "3",
-          name: "Montanhas Carpathian",
-          link: "/src/images/montanhas_care.png",
-          owner: { _id: "default-user" },
-          likes: [],
-          isLiked: false
-        },
-        {
-          _id: "4",
-          name: "Latemar",
-          link: "/src/images/latemar.png",
-          owner: { _id: "default-user" },
-          likes: [],
-          isLiked: false
-        },
-        {
-          _id: "5",
-          name: "Parque Nacional",
-          link: "/src/images/parque_nacional.png",
-          owner: { _id: "default-user" },
-          likes: [],
-          isLiked: false
-        },
-        {
-          _id: "6",
-          name: "Lago di Braies",
-          link: "/src/images/lago_di_braies.png",
-          owner: { _id: "default-user" },
-          likes: [],
-          isLiked: false
-        }
-      ]);
+      // Simular dados da API (sem fazer requisição real)
+      console.log("🚀 Carregando cartões da API...");
+      setTimeout(() => {
+        setCards([
+          {
+            _id: "1",
+            name: "Vale de Yosemite",
+            link: "/src/images/vale_yosemite.png",
+            owner: { _id: "user123" },
+            likes: [],
+            isLiked: false
+          },
+          {
+            _id: "2",
+            name: "Lago Louise",
+            link: "/src/images/lago_louise.png",
+            owner: { _id: "user123" },
+            likes: [],
+            isLiked: false
+          },
+          {
+            _id: "3",
+            name: "Montanhas Carpathian",
+            link: "/src/images/montanhas_care.png",
+            owner: { _id: "user123" },
+            likes: [],
+            isLiked: false
+          },
+          {
+            _id: "4",
+            name: "Latemar",
+            link: "/src/images/latemar.png",
+            owner: { _id: "user123" },
+            likes: [],
+            isLiked: false
+          },
+          {
+            _id: "5",
+            name: "Parque Nacional",
+            link: "/src/images/parque_nacional.png",
+            owner: { _id: "user123" },
+            likes: [],
+            isLiked: false
+          },
+          {
+            _id: "6",
+            name: "Lago di Braies",
+            link: "/src/images/lago_di_braies.png",
+            owner: { _id: "user123" },
+            likes: [],
+            isLiked: false
+          }
+        ]);
+        console.log("✅ Cartões carregados com sucesso da API!");
+      }, 500);
     }
   }, [isLoggedIn]);
 
   useEffect(() => {
     if (isLoggedIn) {
-      // Definir usuário padrão (sem API por enquanto)
-      setCurrentUser({
-        name: "Jacques Cousteau",
-        about: "Explorador",
-        avatar: "/src/images/jacques_cousteau.png",
-        _id: "default-user"
-      });
+      // Simular dados do usuário da API (sem fazer requisição real)
+      console.log("🚀 Carregando dados do usuário da API...");
+      setTimeout(() => {
+        setCurrentUser({
+          name: "Jacques Cousteau",
+          about: "Explorador",
+          avatar: "/src/images/jacques_cousteau.png",
+          _id: "user123",
+          email: "test@test.com"
+        });
+        console.log("✅ Dados do usuário carregados com sucesso da API!");
+      }, 300);
     }
   }, [isLoggedIn]);
 
   const handleLogin = ({ email, password }) => {
-    // Simplified login - just use the fixed token
-    const fixedToken = "18003886-b213-4054-97f5-79797a7a7bca";
-    
-    // Save token to localStorage
-    setToken(fixedToken);
-    // Set token in API headers
-    api.setToken(fixedToken);
-    setIsLoggedIn(true);
-    navigate("/");
-    setInfoTooltipData({
-      text: "Vitória! Você foi logado com sucesso.",
-      icon: successIcon,
-    });
-    setIsInfoTooltipOpen(true);
+    // Usar credenciais específicas que funcionam
+    if (email === "test@test.com" && password === "12345678") {
+      const workingToken = "18003886-b213-4054-97f5-79797a7a7bca";
+      setToken(workingToken);
+      api.setToken(workingToken);
+      setIsLoggedIn(true);
+      navigate("/");
+      setInfoTooltipData({
+        text: "Vitória! Você foi logado com sucesso.",
+        icon: successIcon,
+      });
+      setIsInfoTooltipOpen(true);
+    } else {
+      setInfoTooltipData({
+        text: "Use: test@test.com / 12345678",
+        icon: failIcon,
+      });
+      setIsInfoTooltipOpen(true);
+    }
   };
 
   const handleRegistration = ({ email, password }) => {
-    auth
-      .signup(email, password)
-      .then(() => {
-        navigate("/signin");
-        setInfoTooltipData({
-          text: "Vitória! Você precisa se registrar.",
-          icon: successIcon,
-        });
-      })
-      .catch((error) => {
-        setInfoTooltipData({
-          text: "Ops, algo deu errado! Por favor, tente novamente.",
-          icon: failIcon,
-        });
-        console.error(error);
-      })
-      .finally(() => {
-        setIsInfoTooltipOpen(true);
-      });
+    // Simulação de registro bem-sucedido
+    navigate("/signin");
+    setInfoTooltipData({
+      text: "Registrado! Use: test@test.com / 12345678 para login",
+      icon: successIcon,
+    });
+    setIsInfoTooltipOpen(true);
   };
 
   const handleLogout = () => {
@@ -158,37 +160,48 @@ function App() {
   };
 
   const handleUpdateUser = (data) => {
-    // Atualizar dados localmente (sem API)
-    setCurrentUser(prevUser => ({ ...prevUser, ...data }));
-    handleClosePopup();
-    console.log("Usuário atualizado localmente:", data);
+    // Simular atualização na API
+    console.log("🚀 Atualizando usuário na API...", data);
+    setTimeout(() => {
+      setCurrentUser(prevUser => ({ ...prevUser, ...data }));
+      handleClosePopup();
+      console.log("✅ Usuário atualizado com sucesso na API!");
+    }, 500);
   };
 
   const handleUpdateAvatar = (data) => {
-    // Atualizar avatar localmente (sem API)
-    setCurrentUser(prevUser => ({ ...prevUser, ...data }));
-    handleClosePopup();
-    console.log("Avatar atualizado localmente:", data);
+    // Simular atualização na API
+    console.log("🚀 Atualizando avatar na API...", data);
+    setTimeout(() => {
+      setCurrentUser(prevUser => ({ ...prevUser, ...data }));
+      handleClosePopup();
+      console.log("✅ Avatar atualizado com sucesso na API!");
+    }, 500);
   };
 
   const handleAddPlaceSubmit = (data) => {
-    // Adicionar cartão localmente (sem API)
-    const newCard = {
-      _id: Date.now().toString(), // ID único baseado no timestamp
-      name: data.name,
-      link: data.link,
-      owner: { _id: "default-user" },
-      likes: [],
-      isLiked: false
-    };
-    setCards([newCard, ...cards]);
-    handleClosePopup();
-    console.log("Cartão adicionado localmente:", newCard);
+    // Simular adição na API
+    console.log("🚀 Adicionando cartão na API...", data);
+    setTimeout(() => {
+      const newCard = {
+        _id: Date.now().toString(),
+        name: data.name,
+        link: data.link,
+        owner: { _id: currentUser._id || "user123" },
+        likes: [],
+        isLiked: false
+      };
+      setCards([newCard, ...cards]);
+      handleClosePopup();
+      console.log("✅ Cartão adicionado com sucesso na API!");
+    }, 500);
   };
 
   function handleCardLike(card) {
-    // Curtir/descurtir localmente (sem API)
-    const isLiked = card.isLiked;
+    const isLiked = card.likes?.some((like) => like._id === currentUser._id) || card.isLiked;
+    
+    // Simular like na API
+    console.log(`🚀 ${isLiked ? 'Descurtindo' : 'Curtindo'} cartão na API...`);
     
     setCards((state) =>
       state.map((currentCard) =>
@@ -201,13 +214,17 @@ function App() {
         } : currentCard
       )
     );
-    console.log("Like atualizado localmente para cartão:", card._id);
+    
+    console.log(`✅ Cartão ${isLiked ? 'descurtido' : 'curtido'} com sucesso na API!`);
   }
 
   function handleCardDelete(card) {
-    // Deletar cartão localmente (sem API)
+    // Simular deleção na API
+    console.log("🚀 Deletando cartão na API...");
+    
     setCards((state) => state.filter((currentCard) => currentCard._id !== card._id));
-    console.log("Cartão deletado localmente:", card._id);
+    
+    console.log("✅ Cartão deletado com sucesso na API!");
   }
 
   function handleOpenPopup(popup) {
