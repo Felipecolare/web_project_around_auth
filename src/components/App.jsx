@@ -101,7 +101,7 @@ function App() {
       .then(() => {
         navigate("/login");
         setInfoTooltipData({
-          text: "Vitória! Você precisa se registrar.",
+          text: "Felipe! Você precisa se registrar.",
           icon: successIcon,
         });
       })
